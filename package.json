@@ -11,6 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@markdoc/markdoc": "^0.4.0",
     "@remix-run/css-bundle": "^2.4.1",
     "@remix-run/node": "^2.4.1",
     "@remix-run/react": "^2.4.1",
@@ -20,7 +21,6 @@
     "dotenv": "^16.3.1",
     "hono": "^3.12.3",
     "isbot": "^3.6.8",
-    "pg": "^8.11.3",
     "pino": "^8.17.2",
     "pino-pretty": "^10.3.1",
     "react": "^18.2.0",
@@ -33,7 +33,6 @@
     "@remix-run/dev": "^2.4.1",
     "@types/compression": "^1.7.2",
     "@types/cors": "^2.8.17",
-    "@types/pg": "^8.10.9",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@types/source-map-support": "^0.5.6",

@@ -1,6 +1,9 @@
-import pg from 'pg'
+import { Database } from "bun:sqlite"
+import { logger } from "src/logger"
 
-export const pool = new pg.Pool({
-  connectionString: process.env.DSN,
-  connectionTimeoutMillis: 5000
+const dbFileName = process.env.DB_FILENAME ?? "aspiring.dev.db"
+export const db = new Database(dbFileName, {
+  create: true,
 })
+logger.debug(`Using db file "${dbFileName}"`)
+db.exec("PRAGMA journal_mode = WAL;")

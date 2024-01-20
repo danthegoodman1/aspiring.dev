@@ -11,13 +11,13 @@ import sourceMapSupport from "source-map-support"
 sourceMapSupport.install()
 
 // import * as build from "@remix-run/dev/server-build"
-import "./db/index"
+import "./db/db.server"
 import * as build from "../build/index.js"
 import { remix } from "remix-hono/handler"
 import { cors } from "hono/cors"
 import { serveStatic } from "hono/bun"
 import { Server } from "bun"
-import { initDB } from "./db/index"
+import { initDB } from "./db/db.server"
 
 const listenPort = process.env.PORT || "8080"
 

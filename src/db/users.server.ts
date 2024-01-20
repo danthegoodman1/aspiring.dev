@@ -1,7 +1,8 @@
 import { logger } from "src/logger"
-import { db } from "."
+import { db } from "./db.server"
 import { UserRow } from "./types"
 import { extractError } from "src/utils"
+import { RowsNotFound } from "./errors"
 
 export function createOrGetUser(id: string, email: string): UserRow {
   try {
@@ -36,4 +37,20 @@ export function createOrGetUser(id: string, email: string): UserRow {
     )
     throw error
   }
+}
+
+export function selectUser(id: string): UserRow {
+  const user = db
+    .query(
+      `
+select *
+from users
+where id = ?
+`
+    )
+    .get(id) as UserRow | undefined
+  if (!user) {
+    throw new RowsNotFound()
+  }
+  return user
 }

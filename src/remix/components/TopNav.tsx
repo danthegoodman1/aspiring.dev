@@ -6,6 +6,8 @@ import { Link, NavLink } from "@remix-run/react"
 interface LinkItem {
   name: string
   href: string
+  subscriber?: boolean
+  authed?: boolean
   end?: boolean
 }
 
@@ -15,14 +17,13 @@ const leftNav: LinkItem[] = [
 ]
 
 const rightNav: LinkItem[] = [
-  { name: "Dashboard", href: "/dashboard", end: true },
-  { name: "Repos", href: "/dashboard/repos" },
-  { name: "Settings", href: "/dashboard/settings" },
+  { name: "Settings", href: "/settings", authed: true },
   { name: "Sign out", href: "/signout" },
 ]
 
 export default function TopNav(props: {
   authed?: boolean
+  subscribed?: boolean
   redirectTo: string
 }) {
   return (
@@ -78,15 +79,23 @@ export default function TopNav(props: {
                   )}
                   {props.authed && (
                     <div className="hidden sm:flex gap-8 items-center justify-center text-neutral-700 font-medium">
-                      {rightNav.map((item) => (
-                        <NavLink
-                          end={item.end ?? false}
-                          key={item.name}
-                          to={item.href}
-                        >
-                          {item.name}
-                        </NavLink>
-                      ))}
+                      {rightNav.map((item) => {
+                        if (item.subscriber && !props.subscribed) {
+                          return null
+                        }
+                        if (item.authed && !props.authed) {
+                          return null
+                        }
+                        return (
+                          <NavLink
+                            end={item.end ?? false}
+                            key={item.name}
+                            to={item.href}
+                          >
+                            {item.name}
+                          </NavLink>
+                        )
+                      })}
                     </div>
                   )}
                 </div>
@@ -100,15 +109,23 @@ export default function TopNav(props: {
                     <Disclosure.Button>Home</Disclosure.Button>
                   </NavLink>
                   {[...leftNav, ...(props.authed ? rightNav : [])].map(
-                    (item) => (
-                      <NavLink
-                        key={item.name}
-                        end={item.end ?? false}
-                        to={item.href}
-                      >
-                        <Disclosure.Button>{item.name}</Disclosure.Button>
-                      </NavLink>
-                    )
+                    (item) => {
+                      if (item.subscriber && !props.subscribed) {
+                        return null
+                      }
+                      if (item.authed && !props.authed) {
+                        return null
+                      }
+                      return (
+                        <NavLink
+                          key={item.name}
+                          end={item.end ?? false}
+                          to={item.href}
+                        >
+                          <Disclosure.Button>{item.name}</Disclosure.Button>
+                        </NavLink>
+                      )
+                    }
                   )}
                   {!props.authed && (
                     <Link

@@ -1,7 +1,8 @@
 import { createCookieSessionStorage } from "@remix-run/node"
 import { Authenticator } from "remix-auth"
 import { OAuth2Strategy } from "remix-auth-oauth2"
-import { createOrGetUser } from "src/db/users"
+import { db } from "src/db/db.server"
+import { createOrGetUser } from "src/db/users.server"
 
 import { logger } from "src/logger"
 import { extractError } from "src/utils"
@@ -19,7 +20,11 @@ export let sessionStorage = createCookieSessionStorage({
   },
 })
 
-export interface AuthSession {}
+export interface AuthSession {
+  id: string
+  email: string
+  subscription?: string
+}
 
 export let authenticator = new Authenticator<AuthSession>(sessionStorage)
 

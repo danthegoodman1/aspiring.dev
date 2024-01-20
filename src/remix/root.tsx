@@ -97,6 +97,7 @@ export default function App() {
               data.currentPath === "/" ? "/dashboard" : data.currentPath
             }
             authed={!!data.user}
+            subscribed={!!data.user?.subscription}
           />
           <Outlet />
         </div>

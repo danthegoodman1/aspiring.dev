@@ -5,10 +5,11 @@ export interface DocumentRow {
    * Increment on update
    */
   version: number
+  published: boolean
   /**
-   * Support renaming the slug, redirecting to the new slug
+   * Slugs of old posts will redirect to the most recent version
    */
-  slug: string[]
+  slug: string
   /**
    * E.g. a title, pulled from the first h1 in markdown on upload
    */
@@ -25,6 +26,8 @@ export interface DocumentRow {
    * To the markdown file
    */
   markdown_path: string
-  originally_created_ms: number
-  updated_ms: number
+  /**
+   * Creation of the row. Can get initial blog post with the min(created_ms), and most recent update with max(created_ms)
+   */
+  created_ms: string
 }

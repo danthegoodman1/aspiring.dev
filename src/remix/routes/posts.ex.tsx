@@ -25,9 +25,8 @@ Hey this is a callout
 
 {% /callout %}
 
-{% subscriber subscribed=$subscribed %}
+\`{% subscriber subscribed=$subscribed %}\`
 
-{% /subscriber %}
   `}
       variables={{
         testvar: "heyooo",

@@ -49,3 +49,7 @@ code {
 pre {
   @apply rounded-md bg-neutral-200 m-1 p-2
 }
+
+article {
+  @apply flex flex-col gap-4
+}

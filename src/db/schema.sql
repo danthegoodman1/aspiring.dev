@@ -1,0 +1,1 @@
+-- decided not to use sql-migrate because remote sqlite is annoying

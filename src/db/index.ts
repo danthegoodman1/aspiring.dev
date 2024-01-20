@@ -1,7 +1,7 @@
 import { Database } from "bun:sqlite"
 import { logger } from "src/logger"
 
-const dbFileName = process.env.DB_FILENAME ?? "aspiring.dev.db"
+const dbFileName = process.env.DB_FILENAME ?? "sqlite.db"
 export const db = new Database(dbFileName, {
   create: true,
 })

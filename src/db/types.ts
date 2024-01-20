@@ -14,6 +14,10 @@ export interface DocumentRow {
    */
   name: string
   /**
+   * If there is an image before the first h1, store that for preview generation
+   */
+  banner_path: string | null
+  /**
    * To the markdown file
    */
   markdown_path: string

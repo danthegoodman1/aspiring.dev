@@ -14,9 +14,13 @@ export interface DocumentRow {
    */
   name: string
   /**
+   * If a quote-block exists right below the first h1, grab it
+   */
+  description?: string
+  /**
    * If there is an image before the first h1, store that for preview generation
    */
-  banner_path: string | null
+  banner_path?: string
   /**
    * To the markdown file
    */

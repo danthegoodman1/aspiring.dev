@@ -6,6 +6,7 @@ import { createOrGetUser } from "src/db/users.server"
 
 import { logger } from "src/logger"
 import { extractError } from "src/utils"
+import { getSQLiteDate } from "src/utils.server"
 
 // export the whole sessionStorage object
 export let sessionStorage = createCookieSessionStorage({

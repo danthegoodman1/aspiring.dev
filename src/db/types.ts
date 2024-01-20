@@ -17,19 +17,15 @@ export interface DocumentRow {
   /**
    * If a quote-block exists right below the first h1, grab it
    */
-  description?: string
+  description: string | null
   /**
    * If there is an image before the first h1, store that for preview generation
    */
-  banner_path?: string
+  banner_path?: string | null
   /**
-   * To the markdown file
+   * Creation of the row. Can get initial blog post with the min(created), and most recent update with max(created)
    */
-  markdown_path: string
-  /**
-   * Creation of the row. Can get initial blog post with the min(created_ms), and most recent update with max(created_ms)
-   */
-  created_ms: number
+  created: string
 }
 
 export interface UserRow {
@@ -38,10 +34,11 @@ export interface UserRow {
 
   email_on_post: boolean
   subscription?: string
+  created: string
 }
 
 export interface SignInCodeRow {
   code: string
   email: string
-  created_ms: number
+  created: string
 }

@@ -5,7 +5,12 @@ import { slugName, zipFileName } from "./admin.posts"
 import AdmZip from "adm-zip"
 import path from "path"
 import { s3Client } from "src/s3/client.server"
-import { getLatestDocumentBySlug } from "src/db/documents.server"
+import {
+  getLatestDocumentBySlug,
+  insertDocumentVersion,
+} from "src/db/documents.server"
+import { getAssetS3Path, getMarkdownS3Path } from "~/markdown/paths"
+import { randomUUID } from "crypto"
 
 export async function handlePostUpload(
   user: AuthSession,
@@ -49,7 +54,7 @@ export async function handlePostUpload(
         // TODO: extract description from quote following a1
 
         // Upload to S3
-        const fileName = `posts/${slug}/${version}.md`
+        const fileName = getMarkdownS3Path(version, slug)
         await s3Client.putObject({
           Bucket: process.env.S3_BUCKET,
           Key: fileName,
@@ -58,9 +63,21 @@ export async function handlePostUpload(
         logger.debug(`Uploaded ${fileName} to s3`)
 
         // Create with highest version
+        const postID = existingDocument?.id || randomUUID()
+        await insertDocumentVersion({
+          collection: "posts",
+          created: "", // this is ignored
+          description: null,
+          id: postID,
+          name: "",
+          published: existingDocument?.published ?? false,
+          slug,
+          version,
+        })
+        logger.debug(`Inserted post ID ${postID} version ${version} into DB`)
       } else if (isAsset) {
         // Upload asset
-        const fileName = `posts/${slug}/assets/${entry.name}`
+        const fileName = getAssetS3Path(slug, entry.name)
         await s3Client.putObject({
           Bucket: process.env.S3_BUCKET,
           Key: fileName,

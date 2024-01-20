@@ -9,7 +9,7 @@ export async function createOrGetUser(
   email: string
 ): Promise<UserRow> {
   try {
-    const user = db
+    let user = db
       .query(
         `
     select *
@@ -20,14 +20,9 @@ export async function createOrGetUser(
       .get(id) as UserRow | undefined
     if (!user) {
       // Create it
-      db.query(`insert into users (id, email) values (?, ?)`).run(id, email)
-
-      // Return it
-      return {
-        id,
-        email,
-        email_on_post: false,
-      }
+      user = db
+        .query(`insert into users (id, email) values (?, ?) returning *`)
+        .get(id, email) as UserRow
     }
 
     return user

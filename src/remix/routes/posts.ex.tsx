@@ -24,9 +24,14 @@ Hey this is a callout
 {% /callout %}
 
 {% /callout %}
+
+{% subscriber subscribed=$subscribed %}
+
+{% /subscriber %}
   `}
       variables={{
         testvar: "heyooo",
+        subscribed: true,
       }}
     />
   )

@@ -2,6 +2,7 @@ import Markdoc, { RenderableTreeNode } from "@markdoc/markdoc"
 import React from "react"
 import yaml from "js-yaml"
 import { Callout, callout } from "./custom_tags/Callout"
+import { SubscriberOnly, subscriber } from "./custom_tags/SubscriberOnly"
 
 export default function MarkdownRenderer(props: {
   content: string
@@ -15,7 +16,8 @@ export default function MarkdownRenderer(props: {
 
   const content = Markdoc.transform(ast, {
     tags: {
-      callout: callout,
+      callout,
+      subscriber,
     },
     variables: {
       ...frontmatter,
@@ -25,7 +27,8 @@ export default function MarkdownRenderer(props: {
 
   return Markdoc.renderers.react(content, React, {
     components: {
-      Callout: Callout,
+      Callout,
+      SubscriberOnly,
     },
   })
 }

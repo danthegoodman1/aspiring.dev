@@ -4,7 +4,10 @@ import { UserRow } from "./types"
 import { extractError } from "src/utils"
 import { RowsNotFound } from "./errors"
 
-export function createOrGetUser(id: string, email: string): UserRow {
+export async function createOrGetUser(
+  id: string,
+  email: string
+): Promise<UserRow> {
   try {
     const user = db
       .query(

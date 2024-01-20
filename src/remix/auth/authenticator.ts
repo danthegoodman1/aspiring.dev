@@ -77,12 +77,9 @@ authenticator.use(
           "got user"
         )
 
-        const user = createOrGetUser(idToken.sub, idToken.email)
+        const user = await createOrGetUser(idToken.sub, idToken.email)
 
-        return {
-          ...user,
-          accessToken,
-        }
+        return user
       } catch (error) {
         logger.error(
           {

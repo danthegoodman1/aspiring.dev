@@ -32,10 +32,10 @@ export const links: LinksFunction = () => [
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "SellMy.ai" },
+    { title: "aspiring.dev" },
     {
       name: "description",
-      content: "Sell access to your Hugging Face repos instantly",
+      content: "A code blog",
     },
     {
       property: "og:image",

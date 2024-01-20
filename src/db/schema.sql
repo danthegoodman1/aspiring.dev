@@ -22,7 +22,6 @@ create table if not exists documents (
   name text not null,
   description text,
   banner_path text,
-  markdown_path text not null,
 
   created datetime default CURRENT_TIMESTAMP not null,
 

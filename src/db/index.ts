@@ -8,15 +8,30 @@ export const db = new Database(dbFileName, {
   create: true,
 })
 db.exec("PRAGMA journal_mode = WAL;")
-logger.debug(`Using db file "${dbFileName}"`)
-logger.debug(`Running schema.sql`)
-const schema = (
-  await readFile(path.join(import.meta.dir, "schema.sql"))
-).toString()
-schema
-  .split(";")
-  .filter((stmt) => stmt.trim() !== "")
-  .map((stmt) => {
-    db.exec(stmt.trim())
-  })
-logger.debug("Loaded schema")
+
+export async function initDB() {
+  logger.debug(`Using db file "${dbFileName}"`)
+  logger.debug(`Running schema.sql`)
+  const schema = (
+    await readFile(path.join("src", "db", "schema.sql"))
+  ).toString()
+  schema
+    .split(";")
+    .filter((stmt) => stmt.trim() !== "")
+    .map((stmt) => {
+      db.exec(stmt.trim())
+    })
+  logger.debug("Loaded schema")
+}
+
+// export async function prepareStatement(stmt: string): Promise<Statement> {
+//   try {
+//     return db.query(stmt)
+//   } catch (error) {
+//     if ((error as Error).message.includes("no such table")) {
+//       await initDB()
+//       return db.query(stmt)
+//     }
+//     throw error
+//   }
+// }

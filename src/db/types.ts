@@ -29,5 +29,19 @@ export interface DocumentRow {
   /**
    * Creation of the row. Can get initial blog post with the min(created_ms), and most recent update with max(created_ms)
    */
-  created_ms: string
+  created_ms: number
+}
+
+export interface UserRow {
+  id: string
+  email: string
+
+  email_on_post: boolean
+  subscription?: string
+}
+
+export interface SignInCodeRow {
+  code: string
+  email: string
+  created_ms: number
 }

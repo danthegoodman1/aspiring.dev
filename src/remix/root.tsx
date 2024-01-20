@@ -23,6 +23,7 @@ import TopNav from "./components/TopNav"
 import "@fortawesome/fontawesome-svg-core/styles.css"
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { Toaster } from "react-hot-toast"
+import { authenticator } from "./auth/authenticator"
 config.autoAddCss = false /* eslint-disable import/first */
 
 export const links: LinksFunction = () => [
@@ -55,7 +56,7 @@ export async function loader(args: LoaderFunctionArgs) {
     "loaded URL"
   )
 
-  // const user = await authenticator.isAuthenticated(args.request)
+  const user = await authenticator.isAuthenticated(args.request)
 
   // Env vars for frontend
   const ENV: { [key: string]: string } = {}
@@ -64,7 +65,7 @@ export async function loader(args: LoaderFunctionArgs) {
 
   return json({
     currentPath: new URL(args.request.url).pathname,
-    user: null,
+    user,
     ENV,
   })
 }

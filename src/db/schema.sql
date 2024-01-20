@@ -7,6 +7,8 @@ create table if not exists users (
   email_on_post boolean not null default true,
   subscription text,
 
+  created datetime default CURRENT_TIMESTAMP not null,
+
   primary key (id)
 )
 ;
@@ -21,7 +23,8 @@ create table if not exists documents (
   description text,
   banner_path text,
   markdown_path text not null,
-  created_ms int8,
+
+  created datetime default CURRENT_TIMESTAMP not null,
 
   primary key (collection, id)
 )
@@ -32,8 +35,9 @@ create unique index if not exists documents_by_slug on documents(collection, slu
 -- storing anything we'd proxy to segment
 create table if not exists analytics_events (
   id text not null,
-  created_ms int8 not null,
   payload json,
+
+  created datetime default CURRENT_TIMESTAMP not null,
 
   primary key (id)
 )
@@ -43,9 +47,21 @@ create table if not exists analytics_events (
 create table if not exists stripe_webhooks (
   id text not null,
   event text not null,
-  created_ms int8 not null,
   payload json,
 
+  created datetime default CURRENT_TIMESTAMP not null,
+
   primary key (id)
+)
+;
+
+
+create table if not exists signin_codes (
+  code text not null,
+  email text not null,
+
+  created datetime default CURRENT_TIMESTAMP not null,
+
+  primary key(code)
 )
 ;

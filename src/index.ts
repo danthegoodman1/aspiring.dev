@@ -17,6 +17,7 @@ import { remix } from "remix-hono/handler"
 import { cors } from "hono/cors"
 import { serveStatic } from "hono/bun"
 import { Server } from "bun"
+import { initDB } from "./db/index"
 
 const listenPort = process.env.PORT || "8080"
 
@@ -33,6 +34,8 @@ declare module "hono" {
     requestID: string
   }
 }
+
+await initDB()
 
 const app = new Hono<{
   Bindings: {

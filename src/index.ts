@@ -11,6 +11,7 @@ import sourceMapSupport from "source-map-support"
 sourceMapSupport.install()
 
 // import * as build from "@remix-run/dev/server-build"
+import "./db/index"
 import * as build from "../build/index.js"
 import { remix } from "remix-hono/handler"
 import { cors } from "hono/cors"

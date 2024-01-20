@@ -1,4 +1,8 @@
-import type { LinksFunction } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderFunctionArgs,
+  MetaFunction,
+} from "@remix-run/node"
 import {
   Links,
   LiveReload,
@@ -6,15 +10,76 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "@remix-run/react";
+  json,
+  useLoaderData,
+} from "@remix-run/react"
+import { logger } from "src/logger"
 
 import stylesheet from "~/index.css"
+import TopNav from "./components/TopNav"
+// import { authenticator } from "./auth/auth"
+
+// Fix icon resize on reload
+import "@fortawesome/fontawesome-svg-core/styles.css"
+import { config } from "@fortawesome/fontawesome-svg-core"
+import { Toaster } from "react-hot-toast"
+config.autoAddCss = false /* eslint-disable import/first */
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: stylesheet },
 ]
 
+export const meta: MetaFunction = () => {
+  return [
+    { title: "SellMy.ai" },
+    {
+      name: "description",
+      content: "Sell access to your Hugging Face repos instantly",
+    },
+    {
+      property: "og:image",
+      content: "/sell-models-datasets.png",
+    },
+    {
+      property: "twitter:image",
+      content: "/sell-models-datasets.png",
+    },
+  ]
+}
+
+export async function loader(args: LoaderFunctionArgs) {
+  logger.debug(
+    {
+      URL: args.request.url,
+    },
+    "loaded URL"
+  )
+
+  // const user = await authenticator.isAuthenticated(args.request)
+
+  // Env vars for frontend
+  const ENV: { [key: string]: string } = {}
+  ENV["MY_URL"] = process.env.MY_URL!
+  ENV["ENV"] = process.env.NODE_ENV!
+
+  return json({
+    currentPath: new URL(args.request.url).pathname,
+    user: null,
+    ENV,
+  })
+}
+
+declare global {
+  interface Window {
+    ENV: {
+      MY_URL: string
+      NODE_ENV: string
+    }
+  }
+}
+
 export default function App() {
+  const data = useLoaderData<typeof loader>()
   return (
     <html lang="en">
       <head>
@@ -23,12 +88,26 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
-        <Outlet />
+      <body className="h-full">
+        <Toaster />
+        <div className="max-w-[1400px] flex flex-col w-full mx-auto px-4 gap-3">
+          <TopNav
+            redirectTo={
+              data.currentPath === "/" ? "/dashboard" : data.currentPath
+            }
+            authed={!!data.user}
+          />
+          <Outlet />
+        </div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+          }}
+        />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
       </body>
     </html>
-  );
+  )
 }

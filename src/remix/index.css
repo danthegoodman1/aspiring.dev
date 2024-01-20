@@ -2,29 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-/* html {
-  background-color: #212020;
-  font-family: 'Satoshi-Variable';
-  @apply text-gray-200;
-  height: 100%;
+html {
   overflow-y: scroll;
-} */
 
-/* h1 {
-  @apply text-3xl font-medium text-white
+  height: 100%;
+}
+
+h1 {
+  @apply text-4xl font-medium
 }
 
 h2 {
-  @apply text-2xl font-medium text-white
+  @apply text-3xl font-medium
 }
 
 h3 {
-  @apply text-2xl font-medium text-gray-100
+  @apply text-2xl font-medium text-neutral-900
 }
 
 h4 {
-  @apply text-xl text-gray-100
-} */
+  @apply text-xl text-neutral-700
+}
+
+code {
+  @apply bg-neutral-200 text-neutral-900 p-1 rounded-md
+}
+
+a.active {
+  @apply underline text-black
+}
+
+a {
+  @apply hover:underline
+}
 
 /* @font-face {
   font-family: 'Satoshi-Variable';
@@ -32,12 +42,10 @@ h4 {
 } */
 
 
-/* Clerk */
-
-.cl-internal-b3fm6y {
-  display: none;
+code {
+  @apply p-1 rounded-md bg-neutral-200 text-wrap
 }
 
-.cl-internal-wkkub3 {
-  display: none;
+pre {
+  @apply rounded-md bg-neutral-200 m-1 p-2
 }

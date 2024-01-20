@@ -14,16 +14,19 @@ export const callout: Schema = {
     title: {
       type: String,
     },
+    color: {
+      type: String,
+    },
   },
 }
 
 export function Callout(
-  props: PropsWithChildren<{ title?: string; icon?: string }>
+  props: PropsWithChildren<{ title?: string; icon?: string; color?: string }>
 ) {
   return (
     <div className="flex gap-2 p-2 border-2 border-black rounded-lg w-full">
       {props.icon && <span>{props.icon}</span>}
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full gap-2">
         {props.title && (
           <span className="font-bold text-lg">{props.title}</span>
         )}

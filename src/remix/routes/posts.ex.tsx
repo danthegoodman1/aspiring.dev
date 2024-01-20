@@ -3,20 +3,27 @@ import MarkdownRenderer from "~/components/MarkdownRenderer"
 export default function TestPost() {
   return (
     <MarkdownRenderer
-      content={`
-    # Test
+      content={`---
 
-    {% callout title="This is a title!" icon="😊" %}
+title: this is a frontmatter title
 
-    {% callout title="This is a title!" icon="😊" %}
+---
 
-    Hey this is a callout
+# Test
 
-    {% $testvar %}
+{% callout title="This is a title!" icon="😊" %}
 
-    {% /callout %}
+{% callout title="This is a title!" icon="😊" %}
 
-    {% /callout %}
+Hey this is a callout
+
+{% $testvar %}
+
+{% $title %}
+
+{% /callout %}
+
+{% /callout %}
   `}
       variables={{
         testvar: "heyooo",

@@ -24,10 +24,6 @@ h4 {
   @apply text-xl text-neutral-700
 }
 
-code {
-  @apply bg-neutral-200 text-neutral-900 p-1 rounded-md
-}
-
 a.active {
   @apply underline text-black
 }
@@ -36,15 +32,6 @@ a {
   @apply hover:underline
 }
 
-/* @font-face {
-  font-family: 'Satoshi-Variable';
-  src: url('./Satoshi-Variable.ttf') format('truetype');
-} */
-
-
-code {
-  @apply p-1 rounded-md bg-neutral-200 text-wrap
-}
 
 pre {
   @apply rounded-md bg-neutral-200 m-1 p-2

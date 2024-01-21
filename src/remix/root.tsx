@@ -20,7 +20,7 @@ import TopNav from "./components/TopNav"
 // import { authenticator } from "./auth/auth"
 
 // Fix icon resize on reload
-import "@fortawesome/fontawesome-svg-core/styles.css"
+import "@fortawesome/fontawesome-svg-core/styles.css" // not even sure this does anything
 import { config } from "@fortawesome/fontawesome-svg-core"
 import { Toaster } from "react-hot-toast"
 import { authenticator } from "./auth/authenticator"

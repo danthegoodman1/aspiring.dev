@@ -1,5 +1,5 @@
 import { Schema } from "@markdoc/markdoc"
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useEffect } from "react"
 
 export const callout: Schema = {
   render: "Callout",
@@ -20,6 +20,13 @@ export const callout: Schema = {
 export function Callout(
   props: PropsWithChildren<{ title?: string; icon?: string; color?: string }>
 ) {
+  useEffect(() => {
+    setInterval(() => {
+      console.log("hi")
+    }, 1000)
+    console.log("hey")
+  }, [])
+
   return (
     <div className="flex gap-2 p-2 border-2 border-black rounded-lg w-full">
       {props.icon && <span>{props.icon}</span>}

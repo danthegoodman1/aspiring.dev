@@ -1,8 +1,9 @@
 import Markdoc, { RenderableTreeNode } from "@markdoc/markdoc"
 import React from "react"
 import yaml from "js-yaml"
-import { Callout, callout } from "./custom_tags/Callout"
-import { SubscriberOnly, subscriber } from "./custom_tags/SubscriberOnly"
+import { Callout, callout } from "./markdoc/Callout"
+import { SubscriberOnly, subscriber } from "./markdoc/SubscriberOnly"
+import { Fence, fence } from "./markdoc/Fence.server"
 
 export default function MarkdownRenderer(props: {
   content: string
@@ -19,6 +20,9 @@ export default function MarkdownRenderer(props: {
       callout,
       subscriber,
     },
+    nodes: {
+      fence,
+    },
     variables: {
       ...frontmatter,
       ...props.variables,
@@ -29,6 +33,7 @@ export default function MarkdownRenderer(props: {
     components: {
       Callout,
       SubscriberOnly,
+      Fence,
     },
   })
 }

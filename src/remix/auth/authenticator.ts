@@ -1,12 +1,11 @@
 import { createCookieSessionStorage } from "@remix-run/node"
 import { Authenticator } from "remix-auth"
 import { OAuth2Strategy } from "remix-auth-oauth2"
-import { db } from "src/db/db.server"
 import { createOrGetUser } from "src/db/users.server"
 
 import { logger } from "src/logger"
 import { extractError } from "src/utils"
-import { getSQLiteDate } from "src/utils.server"
+import { isAdminEmail } from "src/utils.server"
 
 // export the whole sessionStorage object
 export let sessionStorage = createCookieSessionStorage({
@@ -24,6 +23,7 @@ export let sessionStorage = createCookieSessionStorage({
 export interface AuthSession {
   id: string
   email: string
+  isAdmin: boolean
   subscription?: string
 }
 
@@ -80,7 +80,10 @@ authenticator.use(
 
         const user = await createOrGetUser(idToken.sub, idToken.email)
 
-        return user
+        return {
+          ...user,
+          isAdmin: isAdminEmail(user.email),
+        }
       } catch (error) {
         logger.error(
           {

@@ -1,11 +1,7 @@
 // Had to return from server because otherwise shiki tries to fetch stuff
 
 import { Children, ReactNode } from "react"
-import * as shiki from "shiki"
-
-export const highlighter = await shiki.getHighlighter({
-  theme: "dracula-soft",
-})
+import { highlighter } from "./highlighter.server"
 
 export function Fence(props: { children?: ReactNode; language: string }) {
   const code = Children.toArray(props.children)[0] as string

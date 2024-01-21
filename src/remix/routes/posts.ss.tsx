@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import { renderToString } from "react-dom/server"
-import MarkdownRenderer from "~/components/MarkdownRenderer"
+import MarkdownRenderer from "~/components/MarkdownRenderer.server"
 
 export async function loader(args: LoaderFunctionArgs) {
   const jsx = (

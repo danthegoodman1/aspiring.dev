@@ -1,11 +1,11 @@
-// This is safe to run as a component for client-hydration, but uses less-optimized FenceClient
+// This one should be run in a loader with renderToString(<>) to use a server-side rendering FenceClient
 
 import Markdoc from "@markdoc/markdoc"
 import React from "react"
 import yaml from "js-yaml"
 import { Callout, callout } from "./markdoc/Callout"
 import { SubscriberOnly, subscriber } from "./markdoc/SubscriberOnly"
-import { Fence, fence } from "./markdoc/FenceClient"
+import { Fence, fence } from "./markdoc/Fence.server"
 
 export default function MarkdownRenderer(props: {
   content: string

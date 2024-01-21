@@ -18,7 +18,6 @@ const leftNav: LinkItem[] = [
 
 const rightNav: LinkItem[] = [
   { name: "Settings", href: "/settings", authed: true },
-  { name: "Sign out", href: "/signout" },
 ]
 
 export default function TopNav(props: {
@@ -96,6 +95,12 @@ export default function TopNav(props: {
                           </NavLink>
                         )
                       })}
+                      <NavLink
+                        key={"signout"}
+                        to={`/signout?redirectTo=${props.redirectTo}`}
+                      >
+                        Sign out
+                      </NavLink>
                     </div>
                   )}
                 </div>
@@ -139,6 +144,14 @@ export default function TopNav(props: {
                         />
                       </button>
                     </Link>
+                  )}
+                  {props.authed && (
+                    <NavLink
+                      key={"signout"}
+                      to={`/signout?redirectTo=${props.redirectTo}`}
+                    >
+                      Sign out
+                    </NavLink>
                   )}
                 </>
               </div>

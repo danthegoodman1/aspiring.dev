@@ -6,12 +6,18 @@ export async function loader(args: LoaderFunctionArgs) {
   const searchParams = new URL(args.request.url).searchParams
   const redirectTo = searchParams.get("redirectTo")
 
+  // get the redirect cookie
+  const cookie = await signinRedirectCookie.parse(
+    args.request.headers.get("Cookie")
+  )
+  console.log("got redirect cookie", cookie)
+
   try {
     return await authenticator.authenticate(
       huggingfaceAuthenticator,
       args.request,
       {
-        successRedirect: "/", // this is overridden below
+        successRedirect: cookie ?? "/",
         throwOnError: true,
       }
     )

@@ -23,6 +23,7 @@ const rightNav: LinkItem[] = [
 export default function TopNav(props: {
   authed?: boolean
   subscribed?: boolean
+  isAdmin?: boolean
   redirectTo: string
 }) {
   return (
@@ -101,6 +102,11 @@ export default function TopNav(props: {
                       >
                         Sign out
                       </NavLink>
+                      {props.isAdmin && (
+                        <NavLink key={"posts"} to={`/admin/posts`}>
+                          Posts
+                        </NavLink>
+                      )}
                     </div>
                   )}
                 </div>
@@ -151,6 +157,11 @@ export default function TopNav(props: {
                       to={`/signout?redirectTo=${props.redirectTo}`}
                     >
                       Sign out
+                    </NavLink>
+                  )}
+                  {props.isAdmin && (
+                    <NavLink key={"posts"} to={`/admin/posts`}>
+                      Posts
                     </NavLink>
                   )}
                 </>

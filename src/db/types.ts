@@ -42,3 +42,8 @@ export interface SignInCodeRow {
   email: string
   created: string
 }
+
+export interface DocumentListItem extends DocumentRow {
+  latest_version: number
+  originally_created: string
+}

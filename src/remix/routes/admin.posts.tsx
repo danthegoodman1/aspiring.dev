@@ -2,16 +2,33 @@ import { faWarning } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from "@remix-run/node"
-import { Form, useActionData, useNavigation } from "@remix-run/react"
+import {
+  Form,
+  useActionData,
+  useFetcher,
+  useLoaderData,
+  useNavigation,
+} from "@remix-run/react"
 import { authenticator } from "~/auth/authenticator"
-import { handlePostUpload } from "./handle_post.server"
+import { handlePostUpdate, handlePostUpload } from "./handle_post.server"
+import { listLatestDocumentsForCollection } from "src/db/documents.server"
+import { classNames, getSQLiteDate } from "src/utils"
+import { Switch } from "@headlessui/react"
+import { DocumentListItem, DocumentRow } from "src/db/types"
+import { useEffect, useRef, useState } from "react"
+import toast from "react-hot-toast"
 
 export const newPostName = "newPost"
 export const zipFileName = "zipFile"
 export const slugName = "slug"
+
+export const postRowName = "postRow"
+export const publishedName = "postPublished"
 
 export async function action(args: ActionFunctionArgs) {
   const user = await authenticator.isAuthenticated(args.request)
@@ -27,13 +44,42 @@ export async function action(args: ActionFunctionArgs) {
     return handlePostUpload(user!, formData, args)
   }
 
+  const isPostUpdate = formData.get(postRowName)?.toString()
+  if (isPostUpdate) {
+    return handlePostUpdate(formData, args)
+  }
+
   return null
 }
 
+export async function loader(args: LoaderFunctionArgs) {
+  const posts = await listLatestDocumentsForCollection("posts")
+  console.log(posts)
+
+  return json({
+    posts,
+  })
+}
+
+export interface ActionData {
+  success?: string
+  error?: string
+}
+
 export default function AdminPosts() {
+  const data = useLoaderData<typeof loader>()
   const nav = useNavigation()
   const saving = nav.state !== "idle"
   const actionData = useActionData<typeof action>()
+
+  useEffect(() => {
+    if (actionData?.error) {
+      toast.error(actionData.error)
+    }
+    if (actionData?.success) {
+      toast.success(actionData.success)
+    }
+  }, [actionData])
 
   return (
     <div className="flex flex-col gap-2 mb-10">
@@ -50,6 +96,7 @@ export default function AdminPosts() {
         method="post"
         className="flex gap-4 flex-col border-2 border-black p-4 rounded-lg"
       >
+        <p>Create a new post, or update an existing one</p>
         <input type="hidden" name={newPostName} value={"true"} />
         <div className="flex gap-2 flex-col sm:flex-row items-bottom">
           <div className="flex flex-col gap-2">
@@ -70,10 +117,114 @@ export default function AdminPosts() {
           disabled={saving}
           className="rounded-md py-2 px-6 bg-black text-white flex items-center justify-center grow-0 text-sm hover:bg-neutral-700 disabled:bg-neutral-700 self-baseline"
         >
-          New Post
+          Publish
         </button>
       </Form>
-      <div className="flex mt-4 flex-col gap-10"></div>
+      <div className="flex mt-4 flex-col gap-10">
+        {data.posts?.map((post) => {
+          return <PostRow key={post.id} {...post} />
+        })}
+      </div>
     </div>
+  )
+}
+
+interface PostRowProps extends DocumentListItem {}
+
+function PostRow(props: PostRowProps) {
+  const fetcher = useFetcher<ActionData>()
+  const [isPublished, setPublished] = useState(!!props.published)
+
+  useEffect(() => {
+    if (fetcher.data?.error) {
+      toast.error(fetcher.data.error)
+    }
+    if (fetcher.data?.success) {
+      toast.success(fetcher.data.success)
+    }
+  }, [fetcher.data])
+
+  return (
+    <fetcher.Form
+      encType="multipart/form-data"
+      method="post"
+      key={props.id}
+      className="flex-col sm:flex-row flex gap-4 border-2 border-black p-4 rounded-lg justify-between "
+    >
+      <input type="hidden" name={postRowName} value={props.id} />
+      <div className="flex gap-4">
+        <div className="flex-col flex gap-2 w-full">
+          <h3>
+            {props.name} {props.name} {props.name} {props.name}{" "}
+            <span className="ml-2 text-base text-neutral-400">
+              /posts/{props.slug}
+            </span>
+          </h3>
+          {props.banner_path ? (
+            <img
+              className="border-2 border-black rounded-lg h-32 w-56 aspect-video"
+              src={props.banner_path}
+              alt={props.slug}
+            />
+          ) : (
+            <div className="h-32 w-56 rounded-lg aspect-video border-black border-2 flex items-center justify-center">
+              <p>No image</p>
+            </div>
+          )}
+          <p>{props.description ?? "No description"}</p>
+        </div>
+      </div>
+
+      <div className="flex-col gap-2 h-full flex sm:items-end">
+        <p className="text-left sm:text-right text-neutral-400">
+          Version: <br />
+          <span className="text-black">{props.version}</span>
+        </p>
+        <p className="text-left sm:text-right text-neutral-400">
+          Originally Posted: <br />
+          <span className="text-black">
+            {getSQLiteDate(props.originally_created).toLocaleString()}
+          </span>
+        </p>
+        <div className="flex gap-2 items-center mr-auto sm:mr-0">
+          <p
+            className={classNames(
+              isPublished ? "text-green-600" : "text-neutral-400"
+            )}
+          >
+            {isPublished ? "Published" : "Unpublished"}
+          </p>
+          <Switch
+            checked={isPublished}
+            onChange={() => {
+              setPublished(!isPublished)
+            }}
+            className={({ checked }) =>
+              classNames(
+                "w-[46px] rounded-full h-[24px] flex items-center",
+                checked ? "bg-black" : "bg-neutral-100"
+              )
+            }
+            name={publishedName}
+          >
+            {({ checked }) => (
+              <span
+                aria-hidden="true"
+                className={`${
+                  checked ? "translate-x-[23px]" : "translate-x-[1px]"
+                }
+            pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+              />
+            )}
+          </Switch>
+        </div>
+        <button
+          disabled={fetcher.state !== "idle"}
+          className="rounded-md py-2 px-6 bg-black text-white flex items-center justify-center grow-0 text-sm hover:bg-neutral-700 disabled:bg-neutral-700 self-baseline mr-auto sm:mr-0 sm:ml-auto mt-4"
+        >
+          Update
+        </button>
+      </div>
+    </fetcher.Form>
   )
 }

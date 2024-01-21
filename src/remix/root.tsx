@@ -95,6 +95,7 @@ export default function App() {
         <Toaster />
         <div className="max-w-[1400px] flex flex-col w-full mx-auto px-4 gap-3">
           <TopNav
+            isAdmin={data.user?.isAdmin}
             redirectTo={
               data.currentPath === "/" ? "/dashboard" : data.currentPath
             }

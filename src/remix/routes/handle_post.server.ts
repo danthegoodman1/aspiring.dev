@@ -1,13 +1,19 @@
 import { ActionFunctionArgs, json } from "@remix-run/node"
 import { logger } from "src/logger"
 import { AuthSession } from "~/auth/authenticator"
-import { slugName, zipFileName } from "./admin.posts"
+import {
+  ActionData,
+  postRowName,
+  publishedName,
+  slugName,
+  zipFileName,
+} from "./admin.posts"
 import AdmZip from "adm-zip"
-import path from "path"
 import { s3Client } from "src/s3/client.server"
 import {
   getLatestDocumentBySlug,
   insertDocumentVersion,
+  setDocumentPublishStatus,
 } from "src/db/documents.server"
 import { getAssetS3Path, getMarkdownS3Path } from "~/markdown/paths"
 import { randomUUID } from "crypto"
@@ -20,14 +26,14 @@ export async function handlePostUpload(
   logger.debug("handling new post")
   const slug = formData.get(slugName)?.toString()
   if (!slug) {
-    return json({
+    return json<ActionData>({
       error: "Missing slug",
     })
   }
 
   const zipFile = formData.get(zipFileName) as File | undefined
   if (!zipFile) {
-    return json({
+    return json<ActionData>({
       error: "Missing zipFile",
     })
   }
@@ -88,5 +94,23 @@ export async function handlePostUpload(
     })
   )
 
-  return null
+  return json<ActionData>({
+    success: "UIploaded post",
+  })
+}
+
+export async function handlePostUpdate(
+  formData: FormData,
+  args: ActionFunctionArgs
+) {
+  logger.debug({ formData }, "updating post")
+  const isPublished = formData.get(publishedName) // null when not published
+  setDocumentPublishStatus(
+    "posts",
+    formData.get(postRowName)?.toString()!,
+    !!isPublished
+  )
+  return json<ActionData>({
+    success: "Updated post",
+  })
 }

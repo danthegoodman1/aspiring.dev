@@ -29,7 +29,7 @@ create table if not exists documents (
 )
 ;
 
-create unique index if not exists documents_by_slug on documents(collection, slug);
+create index if not exists documents_by_slug on documents(collection, slug);
 
 -- storing anything we'd proxy to segment
 create table if not exists analytics_events (

@@ -110,6 +110,7 @@ export async function handlePostUpdate(
     formData.get(postRowName)?.toString()!,
     !!isPublished
   )
+  // TODO: Update slug if it changed
   return json<ActionData>({
     success: "Updated post",
   })

@@ -29,6 +29,7 @@ export const slugName = "slug"
 
 export const postRowName = "postRow"
 export const publishedName = "postPublished"
+export const publishedSlug = "postSlug"
 
 export async function action(args: ActionFunctionArgs) {
   const user = await authenticator.isAuthenticated(args.request)
@@ -142,9 +143,10 @@ interface PostRowProps extends DocumentListItem {}
 
 function PostRow(props: PostRowProps) {
   const fetcher = useFetcher<ActionData>()
-  const isPublished = !!(
-    fetcher.formData?.get(publishedName) ?? props.published
-  )
+  // const isPublished = !!(
+  //   fetcher.formData?.get(publishedName) ?? props.published
+  // )
+  const [isPublished, setIsPublished] = useState(!!props.published)
 
   useEffect(() => {
     if (fetcher.data?.error) {
@@ -171,9 +173,14 @@ function PostRow(props: PostRowProps) {
       <div className="flex gap-4">
         <div className="flex-col flex gap-2 w-full">
           <h3>
-            {props.name}{" "}
+            Example post{" "}
             <span className="ml-2 text-base text-neutral-400">
-              /posts/{props.slug}
+              /posts/
+              <input
+                defaultValue={props.slug}
+                type="text"
+                name={publishedSlug}
+              />
             </span>
           </h3>
           {props.banner_path ? (
@@ -202,7 +209,48 @@ function PostRow(props: PostRowProps) {
             {getSQLiteDate(props.originally_created).toLocaleString()}
           </span>
         </p>
-        <div className="flex gap-2 items-center mr-auto sm:mr-0">
+        <p
+          className={classNames(
+            isPublished ? "text-green-600" : "text-neutral-400"
+          )}
+        >
+          {isPublished ? "Published" : "Unpublished"}
+        </p>
+        <input
+          name={publishedName}
+          type="hidden"
+          value={isPublished ? "yes" : "no"}
+        />
+        <Switch
+          checked={isPublished}
+          onChange={() => {
+            setIsPublished(!isPublished)
+          }}
+          className={({ checked }) =>
+            classNames(
+              "w-[46px] rounded-full h-[24px] flex items-center",
+              checked ? "bg-black" : "bg-neutral-100"
+            )
+          }
+          name={publishedName}
+        >
+          {({ checked }) => (
+            <span
+              aria-hidden="true"
+              className={`${
+                checked ? "translate-x-[23px]" : "translate-x-[1px]"
+              }
+            pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+            />
+          )}
+        </Switch>
+        <button
+          disabled={fetcher.state !== "idle"}
+          className="rounded-md py-2 px-6 bg-black text-white flex items-center justify-center grow-0 text-sm hover:bg-neutral-700 disabled:bg-neutral-700 self-baseline sm:ml-auto mt-2"
+        >
+          Update
+        </button>
+        {/* <div className="flex gap-2 items-center mr-auto sm:mr-0">
           <button name={publishedName} value={isPublished ? "no" : "yes"}>
             <p
               className={classNames(
@@ -213,7 +261,7 @@ function PostRow(props: PostRowProps) {
               {isPublished ? "✅" : "⬜️"}
             </p>
           </button>
-        </div>
+        </div> */}
       </div>
     </fetcher.Form>
   )

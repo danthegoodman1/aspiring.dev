@@ -133,7 +133,9 @@ interface PostRowProps extends DocumentListItem {}
 
 function PostRow(props: PostRowProps) {
   const fetcher = useFetcher<ActionData>()
-  const [isPublished, setPublished] = useState(!!props.published)
+  const isPublished = !!(
+    fetcher.formData?.get(publishedName) ?? props.published
+  )
 
   useEffect(() => {
     if (fetcher.data?.error) {
@@ -149,7 +151,12 @@ function PostRow(props: PostRowProps) {
       encType="multipart/form-data"
       method="post"
       key={props.id}
-      className="flex-col sm:flex-row flex gap-4 border-2 border-black p-4 rounded-lg justify-between "
+      className="flex-col sm:flex-row flex gap-4 border-2 border-black p-4 rounded-lg justify-between"
+      onSubmit={(e) => {
+        if (!window.confirm(`Change publish status on "${props.name}"?`)) {
+          e.preventDefault()
+        }
+      }}
     >
       <input type="hidden" name={postRowName} value={props.id} />
       <div className="flex gap-4">
@@ -187,43 +194,17 @@ function PostRow(props: PostRowProps) {
           </span>
         </p>
         <div className="flex gap-2 items-center mr-auto sm:mr-0">
-          <p
-            className={classNames(
-              isPublished ? "text-green-600" : "text-neutral-400"
-            )}
-          >
-            {isPublished ? "Published" : "Unpublished"}
-          </p>
-          <Switch
-            checked={isPublished}
-            onChange={() => {
-              setPublished(!isPublished)
-            }}
-            className={({ checked }) =>
-              classNames(
-                "w-[46px] rounded-full h-[24px] flex items-center",
-                checked ? "bg-black" : "bg-neutral-100"
-              )
-            }
-            name={publishedName}
-          >
-            {({ checked }) => (
-              <span
-                aria-hidden="true"
-                className={`${
-                  checked ? "translate-x-[23px]" : "translate-x-[1px]"
-                }
-            pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-              />
-            )}
-          </Switch>
+          <button name={publishedName} value={isPublished ? "no" : "yes"}>
+            <p
+              className={classNames(
+                isPublished ? "text-green-600" : "text-neutral-400"
+              )}
+            >
+              {isPublished ? "Published " : "Unpublished "}
+              {isPublished ? "✅" : "⬜️"}
+            </p>
+          </button>
         </div>
-        <button
-          disabled={fetcher.state !== "idle"}
-          className="rounded-md py-2 px-6 bg-black text-white flex items-center justify-center grow-0 text-sm hover:bg-neutral-700 disabled:bg-neutral-700 self-baseline mr-auto sm:mr-0 sm:ml-auto mt-4"
-        >
-          Update
-        </button>
       </div>
     </fetcher.Form>
   )

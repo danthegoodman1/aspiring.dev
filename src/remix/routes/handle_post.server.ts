@@ -104,7 +104,7 @@ export async function handlePostUpdate(
   args: ActionFunctionArgs
 ) {
   logger.debug({ formData }, "updating post")
-  const isPublished = formData.get(publishedName) // null when not published
+  const isPublished = formData.get(publishedName)?.toString() === "yes" // null when not published
   setDocumentPublishStatus(
     "posts",
     formData.get(postRowName)?.toString()!,

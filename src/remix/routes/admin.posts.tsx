@@ -171,7 +171,7 @@ function PostRow(props: PostRowProps) {
       <div className="flex gap-4">
         <div className="flex-col flex gap-2 w-full">
           <h3>
-            {props.name} {props.name} {props.name} {props.name}{" "}
+            {props.name}{" "}
             <span className="ml-2 text-base text-neutral-400">
               /posts/{props.slug}
             </span>

@@ -25,7 +25,7 @@ create table if not exists documents (
 
   created timestamptz default CURRENT_TIMESTAMP not null,
 
-  primary key (collection, id)
+  primary key (collection, id, version)
 )
 ;
 

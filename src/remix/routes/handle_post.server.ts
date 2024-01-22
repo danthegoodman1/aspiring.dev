@@ -95,7 +95,7 @@ export async function handlePostUpload(
   )
 
   return json<ActionData>({
-    success: "UIploaded post",
+    success: "Uploaded post",
   })
 }
 

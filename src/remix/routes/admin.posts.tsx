@@ -20,7 +20,7 @@ import { listLatestDocumentsForCollection } from "src/db/documents.server"
 import { classNames, getSQLiteDate } from "src/utils"
 import { Switch } from "@headlessui/react"
 import { DocumentListItem, DocumentRow } from "src/db/types"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useTransition } from "react"
 import toast from "react-hot-toast"
 
 export const newPostName = "newPost"
@@ -72,6 +72,8 @@ export default function AdminPosts() {
   const saving = nav.state !== "idle"
   const actionData = useActionData<typeof action>()
 
+  const formRef = useRef<HTMLFormElement>(null) // resetting
+
   useEffect(() => {
     if (actionData?.error) {
       toast.error(actionData.error)
@@ -80,6 +82,12 @@ export default function AdminPosts() {
       toast.success(actionData.success)
     }
   }, [actionData])
+
+  useEffect(() => {
+    if (nav.state === "submitting") {
+      formRef.current?.reset()
+    }
+  }, [nav.state])
 
   return (
     <div className="flex flex-col gap-2 mb-10">
@@ -95,6 +103,7 @@ export default function AdminPosts() {
         encType="multipart/form-data"
         method="post"
         className="flex gap-4 flex-col border-2 border-black p-4 rounded-lg"
+        ref={formRef}
       >
         <p>Create a new post, or update an existing one</p>
         <input type="hidden" name={newPostName} value={"true"} />

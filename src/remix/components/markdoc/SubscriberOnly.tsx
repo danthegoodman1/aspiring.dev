@@ -26,6 +26,7 @@ export function SubscriberOnly(
 ) {
   const subscribed = !!props.subscribed
 
+  // TODO: Subscriber vs non-sub states
   return (
     <div className="flex gap-2 p-2 border-2 border-black rounded-lg w-full">
       <div className="flex flex-col w-full gap-2">

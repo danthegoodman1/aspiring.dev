@@ -89,7 +89,7 @@ export async function handlePostUpload(
         logger.debug(`Inserted post ID ${postID} version ${version} into DB`)
       } else if (isAsset) {
         // Upload asset
-        const fileName = getAssetS3Path(slug, entry.name)
+        const fileName = `posts/assets/${entry.name}`
         await s3Client.putObject({
           Bucket: process.env.S3_BUCKET,
           Key: fileName,

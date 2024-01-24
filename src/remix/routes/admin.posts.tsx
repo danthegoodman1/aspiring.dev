@@ -173,7 +173,9 @@ function PostRow(props: PostRowProps) {
       <div className="flex gap-4">
         <div className="flex-col flex gap-2 w-full">
           <h3>
-            {props.name || "<no name>"}{" "}
+            <a className="underline" href={`/posts/${props.slug}`}>
+              {props.name || "<no name>"}{" "}
+            </a>
             <span className="ml-2 text-base text-neutral-400">
               /posts/
               <input

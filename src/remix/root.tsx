@@ -97,7 +97,7 @@ export default function App() {
           <TopNav
             isAdmin={data.user?.isAdmin}
             redirectTo={
-              data.currentPath === "/" ? "/dashboard" : data.currentPath
+              data.currentPath === "/" ? "/admin/posts" : data.currentPath
             }
             authed={!!data.user}
             subscribed={!!data.user?.subscription}

@@ -40,3 +40,16 @@ pre {
 article {
   @apply flex flex-col gap-4
 }
+
+.shiki {
+  text-wrap: wrap;
+}
+
+.shiki > code {
+  background-color: #282a36;
+}
+
+code {
+  background-color: #3a3d50;
+  @apply p-1 rounded-md text-neutral-100 text-sm
+}

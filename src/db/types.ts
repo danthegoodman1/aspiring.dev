@@ -25,7 +25,8 @@ export interface DocumentRow {
   /**
    * Creation of the row. Can get initial blog post with the min(created), and most recent update with max(created)
    */
-  created: string
+  created_ms: number
+  originally_created_ms: number
 }
 
 export interface UserRow {
@@ -34,16 +35,11 @@ export interface UserRow {
 
   email_on_post: boolean
   subscription?: string
-  created: string
+  created_ms: string
 }
 
 export interface SignInCodeRow {
   code: string
   email: string
-  created: string
-}
-
-export interface DocumentListItem extends DocumentRow {
-  latest_version: number
-  originally_created: string
+  created_ms: string
 }

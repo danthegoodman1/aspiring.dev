@@ -7,7 +7,7 @@ create table if not exists users (
   email_on_post boolean not null default true,
   subscription text,
 
-  created timestamptz default CURRENT_TIMESTAMP not null,
+  created_ms int8 not null,
 
   primary key (id)
 )
@@ -23,7 +23,8 @@ create table if not exists documents (
   description text,
   banner_path text,
 
-  created timestamptz default CURRENT_TIMESTAMP not null,
+  created_ms int8 not null,
+  originally_created_ms int8 not null,
 
   primary key (collection, id, version)
 )
@@ -36,7 +37,7 @@ create table if not exists analytics_events (
   id text not null,
   payload json,
 
-  created timestamptz default CURRENT_TIMESTAMP not null,
+  created_ms int8 not null,
 
   primary key (id)
 )
@@ -48,7 +49,7 @@ create table if not exists stripe_webhooks (
   event text not null,
   payload json,
 
-  created timestamptz default CURRENT_TIMESTAMP not null,
+  created_ms int8 not null,
 
   primary key (id)
 )
@@ -59,7 +60,7 @@ create table if not exists signin_codes (
   code text not null,
   email text not null,
 
-  created timestamptz default CURRENT_TIMESTAMP not null,
+  created_ms int8 not null,
 
   primary key(code)
 )

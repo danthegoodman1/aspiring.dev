@@ -3,14 +3,16 @@ import { logger } from "src/logger"
 import { AuthSession } from "~/auth/authenticator"
 import {
   ActionData,
-  postRowName,
+  postRowIDName,
   publishedName,
+  publishedSlug,
   slugName,
   zipFileName,
 } from "./admin.posts"
 import AdmZip from "adm-zip"
 import { s3Client } from "src/s3/client.server"
 import {
+  getLatestDocumentByID,
   getLatestDocumentBySlug,
   insertDocumentVersion,
   setDocumentPublishStatus,
@@ -70,15 +72,19 @@ export async function handlePostUpload(
 
         // Create with highest version
         const postID = existingDocument?.id || randomUUID()
+        const created = new Date().getTime()
         await insertDocumentVersion({
           collection: "posts",
-          created: "", // this is ignored
+          created_ms: created, // this is ignored
           description: null,
           id: postID,
           name: "",
           published: existingDocument?.published ?? false,
           slug,
           version,
+          originally_created_ms: existingDocument
+            ? existingDocument.originally_created_ms
+            : created,
         })
         logger.debug(`Inserted post ID ${postID} version ${version} into DB`)
       } else if (isAsset) {
@@ -105,12 +111,29 @@ export async function handlePostUpdate(
 ) {
   logger.debug({ formData }, "updating post")
   const isPublished = formData.get(publishedName)?.toString() === "yes" // null when not published
-  setDocumentPublishStatus(
+  await setDocumentPublishStatus(
     "posts",
-    formData.get(postRowName)?.toString()!,
+    formData.get(postRowIDName)?.toString()!,
     !!isPublished
   )
-  // TODO: Update slug if it changed
+  const postID = formData.get(postRowIDName)!.toString()
+  const document = (await getLatestDocumentByID("posts", postID))!
+  const newSlug = formData.get(publishedSlug)!.toString()
+  if (document.slug !== newSlug) {
+    // Make a new version with new slug
+    const created = new Date().getTime()
+    await insertDocumentVersion({
+      collection: "posts",
+      created_ms: created, // this is ignored
+      description: null,
+      id: postID,
+      name: "",
+      published: isPublished,
+      slug: newSlug,
+      version: document.version + 1,
+      originally_created_ms: document.originally_created_ms,
+    })
+  }
   return json<ActionData>({
     success: "Updated post",
   })

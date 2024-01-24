@@ -1,5 +1,5 @@
 import { db } from "./db.server"
-import { DocumentListItem, DocumentRow } from "./types"
+import { DocumentRow } from "./types"
 
 export async function getLatestDocumentBySlug(
   collection: string,
@@ -17,6 +17,25 @@ export async function getLatestDocumentBySlug(
   `
     )
     .get(collection, slug)) as DocumentRow | undefined
+  return row
+}
+
+export async function getLatestDocumentByID(
+  collection: string,
+  id: string
+): Promise<DocumentRow | undefined> {
+  const row = (await db
+    .query(
+      `
+    select *
+    from documents
+    where collection = ?
+    and id = ?
+    order by version desc
+    limit 1
+  `
+    )
+    .get(collection, id)) as DocumentRow | undefined
   return row
 }
 
@@ -43,28 +62,18 @@ export async function getLatestPublishedDocumentBySlug(
 export async function listLatestDocumentsForCollection(
   collection: string,
   options?: { requirePublished?: boolean }
-): Promise<DocumentListItem[] | undefined> {
+): Promise<DocumentRow[] | undefined> {
   const rows = (await db
     .query(
       `
-      SELECT d.*, originally_created.min_created as originally_created
-      FROM documents d
-      JOIN (
-        SELECT collection, id, MAX(version) AS latest_version
-        FROM documents
-        WHERE collection = ?
-        ${options?.requirePublished ? "AND published = true" : ""}
-        GROUP BY collection, id
-      ) latest_docs ON d.collection = latest_docs.collection AND d.id = latest_docs.id AND d.version = latest_docs.latest_version
-      JOIN (
-        SELECT collection, id, MIN(created) AS min_created
-        FROM documents
-        WHERE collection = ?
-        GROUP BY collection, id
-      ) originally_created ON d.collection = originally_created.collection AND d.id = originally_created.id
+      SELECT *
+      from documents
+      where collection = ?
+      ${options?.requirePublished ? "and published = true" : ""}
+      order by version desc limit 1
       `
     )
-    .all(collection, collection)) as DocumentListItem[] | undefined
+    .all(collection)) as DocumentRow[] | undefined
   return rows
 }
 
@@ -80,8 +89,12 @@ export async function insertDocumentVersion(doc: DocumentRow) {
       slug,
       name,
       description,
-      banner_path
+      banner_path,
+      created_ms,
+      originally_created_ms
     ) values (
+      ?,
+      ?,
       ?,
       ?,
       ?,
@@ -101,7 +114,9 @@ export async function insertDocumentVersion(doc: DocumentRow) {
       doc.slug,
       doc.name,
       doc.description ?? null,
-      doc.banner_path ?? null
+      doc.banner_path ?? null,
+      doc.created_ms,
+      doc.originally_created_ms
     )
 }
 

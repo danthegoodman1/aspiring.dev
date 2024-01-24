@@ -21,8 +21,10 @@ export async function createOrGetUser(
     if (!user) {
       // Create it
       user = db
-        .query(`insert into users (id, email) values (?, ?) returning *`)
-        .get(id, email) as UserRow
+        .query(
+          `insert into users (id, email, created_ms) values (?, ?, ?) returning *`
+        )
+        .get(id, email, new Date().getTime()) as UserRow
     }
 
     return user

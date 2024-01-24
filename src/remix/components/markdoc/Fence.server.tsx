@@ -10,6 +10,7 @@ export function Fence(props: { children?: ReactNode; language: string }) {
   })
   return (
     <div
+      className="text-wrap break-word"
       dangerouslySetInnerHTML={{
         __html: html,
       }}

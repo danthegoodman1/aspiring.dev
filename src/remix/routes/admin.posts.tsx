@@ -19,7 +19,7 @@ import { handlePostUpdate, handlePostUpload } from "./handle_post.server"
 import { listLatestDocumentsForCollection } from "src/db/documents.server"
 import { classNames, getSQLiteDate } from "src/utils"
 import { Switch } from "@headlessui/react"
-import { DocumentListItem, DocumentRow } from "src/db/types"
+import { DocumentRow } from "src/db/types"
 import { useEffect, useRef, useState, useTransition } from "react"
 import toast from "react-hot-toast"
 
@@ -27,7 +27,7 @@ export const newPostName = "newPost"
 export const zipFileName = "zipFile"
 export const slugName = "slug"
 
-export const postRowName = "postRow"
+export const postRowIDName = "postRowID"
 export const publishedName = "postPublished"
 export const publishedSlug = "postSlug"
 
@@ -45,7 +45,7 @@ export async function action(args: ActionFunctionArgs) {
     return handlePostUpload(user!, formData, args)
   }
 
-  const isPostUpdate = formData.get(postRowName)?.toString()
+  const isPostUpdate = formData.get(postRowIDName)?.toString()
   if (isPostUpdate) {
     return handlePostUpdate(formData, args)
   }
@@ -139,7 +139,7 @@ export default function AdminPosts() {
   )
 }
 
-interface PostRowProps extends DocumentListItem {}
+interface PostRowProps extends DocumentRow {}
 
 function PostRow(props: PostRowProps) {
   const fetcher = useFetcher<ActionData>()
@@ -169,11 +169,11 @@ function PostRow(props: PostRowProps) {
         }
       }}
     >
-      <input type="hidden" name={postRowName} value={props.id} />
+      <input type="hidden" name={postRowIDName} value={props.id} />
       <div className="flex gap-4">
         <div className="flex-col flex gap-2 w-full">
           <h3>
-            Example post{" "}
+            {props.name || "<no name>"}{" "}
             <span className="ml-2 text-base text-neutral-400">
               /posts/
               <input
@@ -204,9 +204,15 @@ function PostRow(props: PostRowProps) {
           <span className="text-black">{props.version}</span>
         </p>
         <p className="text-left sm:text-right text-neutral-400">
+          Last Updated: <br />
+          <span className="text-black">
+            {new Date(props.created_ms).toLocaleString()}
+          </span>
+        </p>
+        <p className="text-left sm:text-right text-neutral-400">
           Originally Posted: <br />
           <span className="text-black">
-            {getSQLiteDate(props.originally_created).toLocaleString()}
+            {new Date(props.originally_created_ms).toLocaleString()}
           </span>
         </p>
         <p

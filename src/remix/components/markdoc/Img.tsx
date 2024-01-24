@@ -12,7 +12,7 @@ export function Img(props: {
 }) {
   // TODO: Make a lightbox
   return (
-    <div className="w-full flex flex-col justify-center relative rounded-lg overflow-hidden p-1 ">
+    <div className="w-full my-10 flex flex-col justify-center rounded-lg overflow-hidden p-1 shadow-md">
       <img src={props.src} alt={props.alt} title={props.alt} />
       {/* Caption */}
       {props.alt && (

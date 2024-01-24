@@ -52,7 +52,7 @@ export async function loader(args: LoaderFunctionArgs) {
   const user = await authenticator.isAuthenticated(args.request)
 
   const jsx = (
-    <div className="w-[95%] max-w-[780px] mx-auto">
+    <div className="w-[95%] max-w-[768px] mx-auto">
       <MarkdownRenderer
         content={postString}
         variables={{

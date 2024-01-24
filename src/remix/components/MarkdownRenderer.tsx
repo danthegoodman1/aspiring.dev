@@ -6,6 +6,7 @@ import yaml from "js-yaml"
 import { Callout, callout } from "./markdoc/Callout"
 import { SubscriberOnly, subscriber } from "./markdoc/SubscriberOnly"
 import { Fence, fence } from "./markdoc/FenceClient"
+import { Img, image } from "./markdoc/Img"
 
 export default function MarkdownRenderer(props: {
   content: string
@@ -24,6 +25,7 @@ export default function MarkdownRenderer(props: {
     },
     nodes: {
       fence,
+      image,
     },
     variables: {
       ...frontmatter,
@@ -36,6 +38,7 @@ export default function MarkdownRenderer(props: {
       Callout,
       SubscriberOnly,
       Fence,
+      Img,
     },
   })
 }

@@ -22,10 +22,10 @@ export async function loader(args: LoaderFunctionArgs) {
     })
   }
 
-  // Get the most recent one
+  // Get the most recent one for that ID
   const doc = await getLatestDocumentByID("posts", initialDoc.id)
   if (doc?.slug !== initialDoc.slug) {
-    // Redirect the browser
+    // Redirect to the new slug
     return redirect(`/posts/${doc?.slug}`)
   }
 

@@ -68,7 +68,7 @@ export async function loader(args: LoaderFunctionArgs) {
   })
 }
 
-export default function TestPost() {
+export default function Post() {
   const data = useLoaderData<typeof loader>()
   return (
     <div

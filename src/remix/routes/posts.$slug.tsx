@@ -7,6 +7,7 @@ import {
 } from "src/db/documents.server"
 import { logger } from "src/logger"
 import { s3Client } from "src/s3/client.server"
+import { isAdminEmail } from "src/utils.server"
 import { authenticator } from "~/auth/authenticator"
 import MarkdownRenderer from "~/components/MarkdownRenderer.server"
 import { getMarkdownS3Path } from "~/markdown/paths"
@@ -62,7 +63,9 @@ export async function loader(args: LoaderFunctionArgs) {
       <MarkdownRenderer
         content={postString}
         variables={{
-          subscribed: !!user?.subscription,
+          subscribed: user
+            ? !!user.subscription || isAdminEmail(user.email)
+            : false,
         }}
       />
     </div>

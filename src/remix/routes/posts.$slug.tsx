@@ -54,8 +54,6 @@ export async function loader(args: LoaderFunctionArgs) {
 
   const user = await authenticator.isAuthenticated(args.request)
 
-  console.log(user ? !!user.subscription || isAdminEmail(user.email) : false)
-
   const jsx = (
     <div className="w-[95%] max-w-[768px] mx-auto mb-10">
       <p className="text-neutral-400 mb-2">

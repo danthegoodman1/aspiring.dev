@@ -49,21 +49,22 @@ function Post(props: DocumentRow) {
         }
       }}
     >
-      <div className="flex gap-4">
-        <div className="flex-col items-start sm:flex-row flex gap-4 sm:gap-6">
-          {props.banner_path && (
+      <div className="flex gap-4 w-full">
+        <div className="flex-col items-start sm:flex-row flex gap-4 sm:gap-6 w-full">
+          {/* {props.banner_path && (
             <img
               className="border-2 border-black rounded-lg h-32 w-56 aspect-video"
               src={props.banner_path}
               alt={props.slug}
             />
-          )}
-          <div className="flex flex-col sm:flex-grow gap-2 items-center sm:items-start grow">
+          )} */}
+          <div className="flex flex-col sm:flex-grow sm:gap-4 gap-6 items-center sm:items-start grow">
             <div className="flex flex-col sm:flex-row sm:gap-4 items-center sm:items-start w-full">
               <h2 className="text-center sm:text-left flex-grow">
                 {props.name ||
                   "Example post title Example post title Example post title Example post title Example post title Example post title "}
               </h2>
+              <div className="grow"></div>
               <p className="text-left sm:text-right text-neutral-400 mt-2">
                 Dan Goodman -{" "}
                 {new Date(props.originally_created_ms).toLocaleDateString()}

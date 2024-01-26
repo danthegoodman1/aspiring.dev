@@ -26,15 +26,14 @@ export function SubscriberOnly(
 ) {
   const subscribed = !!props.subscribed
 
-  // TODO: Subscriber vs non-sub states
   return (
-    <div className="flex gap-2 p-2 border-2 border-black rounded-lg w-full">
+    <div className="flex gap-2 my-4 p-2 border-2 border-black rounded-lg w-full">
       <div className="flex flex-col w-full gap-2">
         {props.title && (
-          <span className="font-bold text-lg">{props.title}</span>
+          <span className="font-bold text-lg">⭐️ {props.title}</span>
         )}
-        <span>{props.children}</span>
-        <p>Is subscribed: {subscribed ? "yes" : "no"}</p>
+        {subscribed && <span>{props.children}</span>}
+        {!subscribed && <p>Join and Subscribed to see this content!</p>}
       </div>
     </div>
   )

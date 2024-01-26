@@ -43,6 +43,7 @@ article {
 
 .shiki {
   text-wrap: wrap;
+  overflow-x: scroll;
 }
 
 .shiki > code {

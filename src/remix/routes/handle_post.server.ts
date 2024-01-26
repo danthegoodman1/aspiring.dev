@@ -56,17 +56,20 @@ export async function handlePostUpload(
           version = existingDocument.version + 1
         }
 
-        const markdownContent = entry.getData().toString()
+        let markdownContent = entry.getData().toString()
         // TODO: extract banner image from before h1
         // TODO: extract title from first h1
         // TODO: extract description from quote following a1
+
+        // TODO: Rewrite assets to inject the slug, use regex to look for the assets path and replace it (if between [])
+        markdownContent = rewriteImagePaths(markdownContent, slug)
 
         // Upload to S3
         const fileName = getMarkdownS3Path(version, slug)
         await s3Client.putObject({
           Bucket: process.env.S3_BUCKET,
           Key: fileName,
-          Body: entry.getData(), // TODO: waiting for bun to suppport compression https://github.com/oven-sh/bun/issues/1723 or zlib brotli
+          Body: markdownContent, // TODO: waiting for bun to suppport compression https://github.com/oven-sh/bun/issues/1723 or zlib brotli
         })
         logger.debug(`Uploaded ${fileName} to s3`)
 
@@ -89,7 +92,7 @@ export async function handlePostUpload(
         logger.debug(`Inserted post ID ${postID} version ${version} into DB`)
       } else if (isAsset) {
         // Upload asset
-        const fileName = `posts/assets/${entry.name}`
+        const fileName = getAssetS3Path(slug, entry.name)
         await s3Client.putObject({
           Bucket: process.env.S3_BUCKET,
           Key: fileName,
@@ -137,4 +140,28 @@ export async function handlePostUpdate(
   return json<ActionData>({
     success: "Updated post",
   })
+}
+
+function rewriteImagePaths(markdown: string, slug: string): string {
+  // Find all images
+  let lines = markdown.split("\n")
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    if (
+      line.startsWith("![") &&
+      line.includes("](assets/") &&
+      line.endsWith(")")
+    ) {
+      logger.debug(`Rewrite image line ${line}`)
+      // Get everything between the last ()
+      const assetStart = line.lastIndexOf("(") + 1
+      let assetPath = line.slice(assetStart, line.length - 1)
+      logger.debug(`Asset path: ${assetPath}`)
+      assetPath = assetPath.replaceAll("assets/", `${slug}/assets/`)
+      lines[i] = line.slice(0, assetStart) + assetPath + ")"
+    }
+  }
+
+  return lines.join("\n")
 }

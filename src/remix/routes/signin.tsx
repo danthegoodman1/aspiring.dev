@@ -10,7 +10,6 @@ export async function loader(args: LoaderFunctionArgs) {
   const cookie = await signinRedirectCookie.parse(
     args.request.headers.get("Cookie")
   )
-  console.log("got redirect cookie", cookie)
 
   try {
     return await authenticator.authenticate(

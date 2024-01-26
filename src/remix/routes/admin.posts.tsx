@@ -55,7 +55,6 @@ export async function action(args: ActionFunctionArgs) {
 
 export async function loader(args: LoaderFunctionArgs) {
   const posts = await listLatestDocumentsForCollection("posts")
-  console.log(posts)
 
   return json({
     posts,

@@ -63,8 +63,6 @@ export async function loader(args: LoaderFunctionArgs) {
   ENV["MY_URL"] = process.env.MY_URL!
   ENV["ENV"] = process.env.NODE_ENV!
 
-  console.log(new URL(args.request.url).pathname)
-
   return json({
     currentPath: new URL(args.request.url).pathname,
     user,

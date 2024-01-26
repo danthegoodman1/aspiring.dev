@@ -99,15 +99,6 @@ const server = Bun.serve({
       server,
     })
   },
-  websocket: {
-    message(ws, msg) {
-      console.log("got message", ws.data, msg)
-      ws.send("hi")
-    },
-    open(ws) {
-      console.log("websocket opened", ws.data)
-    },
-  },
 })
 
 const signals = {

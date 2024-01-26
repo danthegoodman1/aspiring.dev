@@ -9,6 +9,7 @@ import { logger } from "src/logger"
 import { s3Client } from "src/s3/client.server"
 import { isAdminEmail } from "src/utils.server"
 import { authenticator } from "~/auth/authenticator"
+import JoinCTA from "~/components/JoinCTA"
 import MarkdownRenderer from "~/components/MarkdownRenderer.server"
 import { getMarkdownS3Path } from "~/markdown/paths"
 
@@ -53,6 +54,9 @@ export async function loader(args: LoaderFunctionArgs) {
   }
 
   const user = await authenticator.isAuthenticated(args.request)
+  const isSubbed = user
+    ? !!user.subscription || isAdminEmail(user.email)
+    : false
 
   const jsx = (
     <div className="w-[95%] max-w-[768px] mx-auto mb-10">
@@ -65,26 +69,10 @@ export async function loader(args: LoaderFunctionArgs) {
       <MarkdownRenderer
         content={postString}
         variables={{
-          subscribed: user
-            ? !!user.subscription || isAdminEmail(user.email)
-            : false,
+          subscribed: isSubbed,
         }}
       />
-      <form className="shadow-xl mt-10 border-2 border-black p-4 sm:p-6 flex flex-col justify-between rounded-lg">
-        <h3>Join and get notified of new posts</h3>
-        <h4 className="text-neutral-500">
-          And subscribe to support more posts and see subscriber-only content!
-        </h4>
-        <input
-          name={emailName}
-          type="email"
-          placeholder="Your email"
-          className="px-3 my-4 py-2 border-black border-2 rounded-md drop-shadow-md"
-        />
-        <button className="rounded-md py-2 px-8 bg-black text-white flex items-center justify-center hover:bg-neutral-700 disabled:bg-neutral-700">
-          Join
-        </button>
-      </form>
+      {!user && <JoinCTA emailName={emailName} />}
     </div>
   )
 

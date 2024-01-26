@@ -27,7 +27,7 @@ export function Callout(
         {props.title && (
           <span className="font-bold text-lg">{props.title}</span>
         )}
-        <span>{props.children}</span>
+        <div className="flex flex-col gap-4">{props.children}</div>
       </div>
     </div>
   )

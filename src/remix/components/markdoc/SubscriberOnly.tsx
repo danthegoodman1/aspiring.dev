@@ -40,7 +40,15 @@ export function SubscriberOnly(
           )}
         </div>
         {subscribed && <span>{props.children}</span>}
-        {!subscribed && <p>Join and Subscribed to see this content!</p>}
+        {!subscribed && (
+          // <a className="rounded-md py-2 my-2 px-6 bg-black text-white flex items-center justify-center grow-0  hover:bg-neutral-700 disabled:bg-neutral-700 w-full self-baseline !no-underline cursor-pointer">
+          //   Subscribe to get instant access
+          // </a>
+          <p className="italic text-neutral-600">
+            I haven't actually implemented subscriptions yet, but join to stay
+            tuned!
+          </p>
+        )}
       </div>
     </div>
   )

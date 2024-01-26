@@ -184,7 +184,7 @@ function PostRow(props: PostRowProps) {
               />
             </span>
           </h3>
-          {props.banner_path ? (
+          {/* {props.banner_path ? (
             <img
               className="border-2 border-black rounded-lg h-32 w-56 aspect-video"
               src={props.banner_path}
@@ -194,8 +194,8 @@ function PostRow(props: PostRowProps) {
             <div className="h-32 w-56 rounded-lg aspect-video border-black border-2 flex items-center justify-center">
               <p>No image</p>
             </div>
-          )}
-          <p className="sm:max-w-[300px]">
+          )} */}
+          <p className="sm:max-w-[300px] text-neutral-600">
             {props.description ?? "No description"}
           </p>
         </div>

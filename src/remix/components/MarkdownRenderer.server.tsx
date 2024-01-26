@@ -7,6 +7,7 @@ import { Callout, callout } from "./markdoc/Callout"
 import { SubscriberOnly, subscriber } from "./markdoc/SubscriberOnly"
 import { Fence, fence } from "./markdoc/Fence.server"
 import { Img, image } from "./markdoc/Img"
+import { BlockQuote, blockquote } from "./markdoc/Quote"
 
 export default function MarkdownRenderer(props: {
   content: string
@@ -26,6 +27,7 @@ export default function MarkdownRenderer(props: {
     nodes: {
       fence,
       image,
+      blockquote,
     },
     variables: {
       ...frontmatter,
@@ -39,6 +41,7 @@ export default function MarkdownRenderer(props: {
       SubscriberOnly,
       Fence,
       Img,
+      BlockQuote,
     },
   })
 }

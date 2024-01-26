@@ -65,7 +65,7 @@ function Post(props: DocumentRow) {
                   "Example post title Example post title Example post title Example post title Example post title Example post title "}
               </h2>
               <p className="text-left sm:text-right text-neutral-400 mt-2">
-                Dan Goodman,
+                Dan Goodman -{" "}
                 {new Date(props.originally_created_ms).toLocaleDateString()}
               </p>
             </div>

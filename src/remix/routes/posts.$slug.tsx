@@ -54,6 +54,13 @@ export async function loader(args: LoaderFunctionArgs) {
 
   const jsx = (
     <div className="w-[95%] max-w-[768px] mx-auto">
+      <p className="text-neutral-400 mb-2">
+        Dan Goodman{" "}
+        <a target="_blank" href="https://twitter.com/Dan_The_Goodman">
+          (@dan_the_goodman)
+        </a>
+        , {new Date(doc.originally_created_ms).toLocaleDateString()}
+      </p>
       <MarkdownRenderer
         content={postString}
         variables={{

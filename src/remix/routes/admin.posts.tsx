@@ -173,7 +173,7 @@ function PostRow(props: PostRowProps) {
         <div className="flex-col flex gap-2 w-full">
           <h3>
             <a className="underline" href={`/posts/${props.slug}`}>
-              {props.name || "<no name>"}{" "}
+              {props.name}
             </a>
             <span className="ml-2 text-base text-neutral-400">
               /posts/
@@ -195,7 +195,9 @@ function PostRow(props: PostRowProps) {
               <p>No image</p>
             </div>
           )}
-          <p>{props.description ?? "No description"}</p>
+          <p className="sm:max-w-[300px]">
+            {props.description ?? "No description"}
+          </p>
         </div>
       </div>
 

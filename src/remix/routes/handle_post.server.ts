@@ -59,9 +59,40 @@ export async function handlePostUpload(
         // Check if first version
 
         let markdownContent = entry.getData().toString()
-        // TODO: extract banner image from before h1
-        // TODO: extract title from first h1
-        // TODO: extract description from quote following a1
+        const markdownLines = markdownContent.split("\n")
+        const h1Location = markdownLines.findIndex((line) => {
+          return line.startsWith("# ")
+        })
+        const h1Content = markdownLines[h1Location].slice(1).trim()
+
+        // TODO: Handle banner image - right now I'm just not using it
+        // if (
+        //   h1Location !== 0 &&
+        //   markdownLines[h1Location - 1].startsWith("![")
+        // ) {
+        //   // We have a banner image
+        //   const line = markdownLines[h1Location - 1]
+        //   const assetStart = line.lastIndexOf("(") + 1
+        //   let assetPath = line.slice(assetStart, line.length - 1)
+        //   assetPath = assetPath.replaceAll("assets/", `${postID}/assets/`)
+        //   logger.debug(`Got asset path ${assetPath}`)
+        // } else {
+        //   logger.debug("no banner image detected")
+        // }
+
+        const descriptionLocation = markdownLines.findIndex((line) => {
+          return line.startsWith("> ")
+        })
+        console.log("descirption location", descriptionLocation, h1Location)
+        let description: string | null = null
+        if (descriptionLocation - h1Location <= 2) {
+          description = markdownLines[descriptionLocation].slice(1).trim()
+          logger.debug(
+            `Got description at ${descriptionLocation}: ${description}`
+          )
+        } else {
+          logger.warn("got no description!")
+        }
 
         // TODO: Rewrite assets to inject the slug, use regex to look for the assets path and replace it (if between [])
         markdownContent = rewriteImagePaths(markdownContent, postID)
@@ -80,9 +111,9 @@ export async function handlePostUpload(
         await insertDocumentVersion({
           collection: "posts",
           created_ms: created, // this is ignored
-          description: null,
+          description,
           id: postID,
-          name: "",
+          name: h1Content,
           published: existingDocument?.published ?? false,
           slug,
           version,

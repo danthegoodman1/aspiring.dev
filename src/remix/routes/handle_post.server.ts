@@ -43,6 +43,13 @@ export async function handlePostUpload(
   const zip = new AdmZip(Buffer.from(await zipFile.arrayBuffer()))
   var zipEntries = zip.getEntries() // an array of ZipEntry records
 
+  let version = 0
+  const existingDocument = await getLatestDocumentBySlug("posts", slug)
+  if (existingDocument) {
+    version = existingDocument.version + 1
+  }
+  const postID = existingDocument?.id || randomUUID()
+
   await Promise.all(
     zipEntries.map(async (entry) => {
       const isMarkdown = entry.name.endsWith(".md")
@@ -50,11 +57,6 @@ export async function handlePostUpload(
 
       if (isMarkdown) {
         // Check if first version
-        let version = 0
-        const existingDocument = await getLatestDocumentBySlug("posts", slug)
-        if (existingDocument) {
-          version = existingDocument.version + 1
-        }
 
         let markdownContent = entry.getData().toString()
         // TODO: extract banner image from before h1
@@ -62,10 +64,10 @@ export async function handlePostUpload(
         // TODO: extract description from quote following a1
 
         // TODO: Rewrite assets to inject the slug, use regex to look for the assets path and replace it (if between [])
-        markdownContent = rewriteImagePaths(markdownContent, slug)
+        markdownContent = rewriteImagePaths(markdownContent, postID)
 
         // Upload to S3
-        const fileName = getMarkdownS3Path(version, slug)
+        const fileName = getMarkdownS3Path(version, postID)
         await s3Client.putObject({
           Bucket: process.env.S3_BUCKET,
           Key: fileName,
@@ -74,7 +76,6 @@ export async function handlePostUpload(
         logger.debug(`Uploaded ${fileName} to s3`)
 
         // Create with highest version
-        const postID = existingDocument?.id || randomUUID()
         const created = new Date().getTime()
         await insertDocumentVersion({
           collection: "posts",
@@ -92,7 +93,7 @@ export async function handlePostUpload(
         logger.debug(`Inserted post ID ${postID} version ${version} into DB`)
       } else if (isAsset) {
         // Upload asset
-        const fileName = getAssetS3Path(slug, entry.name)
+        const fileName = getAssetS3Path(postID, entry.name)
         await s3Client.putObject({
           Bucket: process.env.S3_BUCKET,
           Key: fileName,
@@ -125,6 +126,25 @@ export async function handlePostUpdate(
   if (document.slug !== newSlug) {
     // Make a new version with new slug
     const created = new Date().getTime()
+
+    // Copy the S3 asset
+    console.log(
+      "copying",
+      getMarkdownS3Path(document.version, postID),
+      "to",
+      getMarkdownS3Path(document.version + 1, postID),
+      "bucket",
+      process.env.S3_BUCKET
+    )
+    await s3Client.copyObject({
+      Bucket: process.env.S3_BUCKET,
+      Key: getMarkdownS3Path(document.version + 1, postID),
+      CopySource:
+        process.env.S3_BUCKET +
+        "/" +
+        getMarkdownS3Path(document.version, postID),
+    })
+
     await insertDocumentVersion({
       collection: "posts",
       created_ms: created, // this is ignored
@@ -142,7 +162,7 @@ export async function handlePostUpdate(
   })
 }
 
-function rewriteImagePaths(markdown: string, slug: string): string {
+function rewriteImagePaths(markdown: string, stableID: string): string {
   // Find all images
   let lines = markdown.split("\n")
 
@@ -158,7 +178,7 @@ function rewriteImagePaths(markdown: string, slug: string): string {
       const assetStart = line.lastIndexOf("(") + 1
       let assetPath = line.slice(assetStart, line.length - 1)
       logger.debug(`Asset path: ${assetPath}`)
-      assetPath = assetPath.replaceAll("assets/", `${slug}/assets/`)
+      assetPath = assetPath.replaceAll("assets/", `${stableID}/assets/`)
       lines[i] = line.slice(0, assetStart) + assetPath + ")"
     }
   }

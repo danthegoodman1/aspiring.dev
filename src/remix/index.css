@@ -38,7 +38,15 @@ pre {
 }
 
 article {
-  @apply flex flex-col gap-4
+  @apply flex flex-col gap-5
+}
+
+article > h2 {
+  @apply mt-4
+}
+
+article > h3 {
+  @apply mt-2
 }
 
 .shiki {

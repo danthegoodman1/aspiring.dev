@@ -30,7 +30,6 @@ export async function loader(args: LoaderFunctionArgs) {
   }
 
   // Load the content
-  console.log("loading", getMarkdownS3Path(doc.version, doc.id))
   const post = await s3Client.getObject({
     Bucket: process.env.S3_BUCKET,
     Key: getMarkdownS3Path(doc.version, doc.id),

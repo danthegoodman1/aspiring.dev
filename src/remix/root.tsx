@@ -19,7 +19,6 @@ import { ClientOnly } from "remix-utils/client-only"
 
 import stylesheet from "~/index.css"
 import TopNav from "./components/TopNav"
-// import { authenticator } from "./auth/auth"
 
 // Fix icon resize on reload
 import "@fortawesome/fontawesome-svg-core/styles.css" // not even sure this does anything

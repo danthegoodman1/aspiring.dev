@@ -13,7 +13,11 @@ import {
 import { signinRedirectCookie } from "~/auth/signin_redirect_cookie"
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  await authenticator.isAuthenticated(request, { successRedirect: "/me" })
+  const user = await authenticator.isAuthenticated(request)
+  const cookie = await signinRedirectCookie.parse(request.headers.get("Cookie"))
+  if (user && cookie) {
+    return redirect(cookie)
+  }
   let session = await sessionStorage.getSession(request.headers.get("Cookie"))
   // This session key `auth:magiclink` is the default one used by the EmailLinkStrategy
   // you can customize it passing a `sessionMagicLinkKey` when creating an
@@ -38,7 +42,7 @@ export async function action({ request }: ActionFunctionArgs) {
     await authenticator.authenticate(emailStrategyAuthenticator, request, {
       // If this is not set, any error will be throw and the ErrorBoundary will be
       // rendered.
-      successRedirect: cookie ?? "/",
+      successRedirect: cookie ?? "/signin",
       throwOnError: true,
     })
   } catch (error) {
@@ -46,6 +50,7 @@ export async function action({ request }: ActionFunctionArgs) {
     // caught error is a response and return it or throw it again
     if (error instanceof Response) {
       // Let's inject the cookie to set
+      console.log("got redirect to", redirectTo)
       if (redirectTo) {
         error.headers.set(
           "set-cookie",

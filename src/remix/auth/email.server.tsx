@@ -2,7 +2,7 @@
 import { renderToString } from "react-dom/server"
 import type { SendEmailFunction } from "remix-auth-email-link"
 import { UserRow } from "src/db/types"
-// import * as emailProvider from "~/services/email-provider.server"
+import { logger } from "src/logger"
 
 export let sendEmail: SendEmailFunction<UserRow> = async (options) => {
   let body = renderToString(
@@ -20,7 +20,7 @@ export let sendEmail: SendEmailFunction<UserRow> = async (options) => {
     </div>
   )
 
-  console.log(body, options.emailAddress)
+  logger.debug({ body, email: options.emailAddress }, "sending login email")
 
   const res = await fetch("https://api.postmarkapp.com/email/batch", {
     method: "POST",

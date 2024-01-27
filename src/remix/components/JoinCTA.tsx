@@ -1,6 +1,10 @@
 export default function JoinCTA(props: { emailName: string }) {
   return (
-    <form className="shadow-xl border-2 border-black p-4 sm:p-6 flex flex-col justify-between rounded-lg">
+    <form
+      action="/signin"
+      method="post"
+      className="shadow-xl border-2 border-black p-4 sm:p-6 flex flex-col justify-between rounded-lg"
+    >
       <h3>Join and get notified of new posts</h3>
       <input
         name={props.emailName}

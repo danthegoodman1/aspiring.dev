@@ -33,6 +33,8 @@ declare global {
       AWS_SECRET_ACCESS_KEY?: string
       S3_BUCKET: string
       S3_ENDPOINT: string
+      POSTMARK_TOKEN: string
+      MY_URL: string
     }
   }
 }
@@ -46,6 +48,7 @@ async function main() {
 
   // Remix public
   app.use(express.static("public"))
+  app.use(express.static("src/public"))
 
   app.use((req, res, next) => {
     const reqID = uuidv4()

@@ -5,6 +5,7 @@ import {
   redirect,
 } from "@remix-run/node"
 import { Form, useLoaderData } from "@remix-run/react"
+import { useEffect, useState } from "react"
 import {
   authenticator,
   emailStrategyAuthenticator,
@@ -15,10 +16,16 @@ import { signinRedirectCookie } from "~/auth/signin_redirect_cookie"
 export async function loader({ request }: LoaderFunctionArgs) {
   const user = await authenticator.isAuthenticated(request)
   const cookie = await signinRedirectCookie.parse(request.headers.get("Cookie"))
-  if (user && cookie) {
-    return redirect(cookie)
-  }
   let session = await sessionStorage.getSession(request.headers.get("Cookie"))
+  if (user && cookie) {
+    return redirect(cookie, {
+      headers: {
+        "set-cookie": await signinRedirectCookie.serialize("", {
+          maxAge: 1,
+        }),
+      },
+    })
+  }
   // This session key `auth:magiclink` is the default one used by the EmailLinkStrategy
   // you can customize it passing a `sessionMagicLinkKey` when creating an
   // instance.
@@ -41,7 +48,7 @@ export async function action({ request }: ActionFunctionArgs) {
     await authenticator.authenticate(emailStrategyAuthenticator, request, {
       // If this is not set, any error will be throw and the ErrorBoundary will be
       // rendered.
-      successRedirect: cookie ?? "/signin",
+      successRedirect: cookie ?? "/",
       throwOnError: true,
     })
   } catch (error) {
@@ -66,15 +73,35 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Login() {
   let { magicLinkSent, magicLinkEmail } = useLoaderData<typeof loader>()
+
+  const [resent, setResent] = useState(false)
+
   return (
-    <Form method="post">
+    <>
       {magicLinkSent ? (
-        <p>
-          Successfully sent magic link{" "}
-          {magicLinkEmail ? `to ${magicLinkEmail}` : ""}
-        </p>
+        <Form
+          onSubmit={() => {
+            setResent(true)
+          }}
+          method="post"
+        >
+          <p>
+            Successfully sent magic link{" "}
+            {magicLinkEmail ? `to ${magicLinkEmail}` : ""}
+          </p>
+          <input
+            value={magicLinkEmail}
+            required
+            type="hidden"
+            name="email"
+            id="email"
+          />
+          <button disabled={resent} className="mt-2 text-neutral-600">
+            {resent ? "Resent" : "Need to resend?"}
+          </button>
+        </Form>
       ) : (
-        <>
+        <Form method="post">
           <h3>Sign in :)</h3>
           <input
             id="email"
@@ -87,8 +114,8 @@ export default function Login() {
           <button className="rounded-md py-2 px-8 bg-black text-white flex items-center justify-center hover:bg-neutral-700 disabled:bg-neutral-700">
             Join
           </button>
-        </>
+        </Form>
       )}
-    </Form>
+    </>
   )
 }

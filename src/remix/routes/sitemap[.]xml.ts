@@ -5,10 +5,10 @@ export function loader(args: LoaderFunctionArgs) {
     `
   <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <sitemap>
-      <loc>https://aspiring.dev/sitemap-pages.xml</loc>
+      <loc>${process.env.MY_URL}/sitemap-pages.xml</loc>
     </sitemap>
     <sitemap>
-      <loc>https://aspiring.dev/sitemap-posts.xml</loc>
+      <loc>${process.env.MY_URL}/sitemap-posts.xml</loc>
     </sitemap>
   </sitemapindex>
   `,

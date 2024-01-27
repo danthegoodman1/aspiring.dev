@@ -16,7 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     await authenticator.authenticate(emailStrategyAuthenticator, request, {
       // If this is not set, any error will be throw and the ErrorBoundary will be
       // rendered.
-      successRedirect: cookie ?? "/signin",
+      successRedirect: cookie ?? "/",
       throwOnError: true,
     })
   } catch (error) {

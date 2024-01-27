@@ -38,14 +38,14 @@ export const meta: MetaFunction = () => {
       name: "description",
       content: "A code blog",
     },
-    {
-      property: "og:image",
-      content: "/sell-models-datasets.png",
-    },
-    {
-      property: "twitter:image",
-      content: "/sell-models-datasets.png",
-    },
+    // {
+    //   property: "og:image",
+    //   content: "/sell-models-datasets.png",
+    // },
+    // {
+    //   property: "twitter:image",
+    //   content: "/sell-models-datasets.png",
+    // },
   ]
 }
 

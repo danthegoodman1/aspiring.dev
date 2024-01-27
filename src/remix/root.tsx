@@ -14,6 +14,8 @@ import {
   useLoaderData,
 } from "@remix-run/react"
 import { logger } from "src/logger"
+import { ServerOnly } from "remix-utils/server-only"
+import { ClientOnly } from "remix-utils/client-only"
 
 import stylesheet from "~/index.css"
 import TopNav from "./components/TopNav"
@@ -92,14 +94,30 @@ export default function App() {
       <body className="h-full">
         <Toaster />
         <div className="max-w-[1400px] flex flex-col w-full mx-auto px-4 gap-3">
-          <TopNav
-            isAdmin={data.user?.isAdmin}
-            redirectTo={
-              data.currentPath === "/" ? "/admin/posts" : data.currentPath
-            }
-            authed={!!data.user}
-            subscribed={!!data.user?.subscription}
-          />
+          <ServerOnly>
+            {() => {
+              return (
+                <TopNav
+                  isAdmin={data.user?.isAdmin}
+                  redirectTo={data.currentPath}
+                  authed={!!data.user}
+                  subscribed={!!data.user?.subscription}
+                />
+              )
+            }}
+          </ServerOnly>
+          <ClientOnly>
+            {() => {
+              return (
+                <TopNav
+                  isAdmin={data.user?.isAdmin}
+                  redirectTo={window.location.pathname}
+                  authed={!!data.user}
+                  subscribed={!!data.user?.subscription}
+                />
+              )
+            }}
+          </ClientOnly>
           <Outlet />
         </div>
         <script

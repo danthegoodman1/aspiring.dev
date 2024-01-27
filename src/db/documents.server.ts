@@ -5,18 +5,18 @@ export async function getLatestDocumentBySlug(
   collection: string,
   slug: string
 ): Promise<DocumentRow | undefined> {
-  const row = (await db
-    .query(
-      `
+  const row = await db.get<DocumentRow>(
+    `
     select *
     from documents
     where collection = ?
     and slug = ?
     order by version desc
     limit 1
-  `
-    )
-    .get(collection, slug)) as DocumentRow | undefined
+  `,
+    collection,
+    slug
+  )
   return row
 }
 
@@ -24,18 +24,18 @@ export async function getLatestDocumentByID(
   collection: string,
   id: string
 ): Promise<DocumentRow | undefined> {
-  const row = (await db
-    .query(
-      `
+  const row = await db.get<DocumentRow>(
+    `
     select *
     from documents
     where collection = ?
     and id = ?
     order by version desc
     limit 1
-  `
-    )
-    .get(collection, id)) as DocumentRow | undefined
+  `,
+    collection,
+    id
+  )
   return row
 }
 
@@ -43,9 +43,8 @@ export async function getLatestPublishedDocumentBySlug(
   collection: string,
   slug: string
 ): Promise<DocumentRow | undefined> {
-  const row = (await db
-    .query(
-      `
+  const row = await db.get(
+    `
     select *
     from documents
     where collection = ?
@@ -53,9 +52,10 @@ export async function getLatestPublishedDocumentBySlug(
     and published = true
     order by version desc
     limit 1
-  `
-    )
-    .get(collection, slug)) as DocumentRow | undefined
+  `,
+    collection,
+    slug
+  )
   return row
 }
 
@@ -63,24 +63,22 @@ export async function listLatestDocumentsForCollection(
   collection: string,
   options?: { requirePublished?: boolean }
 ): Promise<DocumentRow[] | undefined> {
-  const rows = (await db
-    .query(
-      `
+  const rows = await db.all(
+    `
       SELECT *
       from documents
       where collection = ?
       ${options?.requirePublished ? "and published = true" : ""}
       order by version desc limit 1
-      `
-    )
-    .all(collection)) as DocumentRow[] | undefined
+      `,
+    collection
+  )
   return rows
 }
 
 export async function insertDocumentVersion(doc: DocumentRow) {
-  await db
-    .query(
-      `
+  await db.run(
+    `
     insert into documents (
       collection,
       id,
@@ -104,20 +102,18 @@ export async function insertDocumentVersion(doc: DocumentRow) {
       ?,
       ?
     )
-  `
-    )
-    .run(
-      doc.collection,
-      doc.id,
-      doc.version,
-      doc.published,
-      doc.slug,
-      doc.name,
-      doc.description ?? null,
-      doc.banner_path ?? null,
-      doc.created_ms,
-      doc.originally_created_ms
-    )
+  `,
+    doc.collection,
+    doc.id,
+    doc.version,
+    doc.published,
+    doc.slug,
+    doc.name,
+    doc.description ?? null,
+    doc.banner_path ?? null,
+    doc.created_ms,
+    doc.originally_created_ms
+  )
 }
 
 export async function setDocumentPublishStatus(
@@ -125,14 +121,15 @@ export async function setDocumentPublishStatus(
   id: string,
   published: boolean
 ) {
-  await db
-    .query(
-      `
+  await db.run(
+    `
     update documents
     set published = ?
     where collection = ?
     and id = ?
-  `
-    )
-    .run(published, collection, id)
+  `,
+    published,
+    collection,
+    id
+  )
 }

@@ -2,10 +2,12 @@ import { createCookieSessionStorage } from "@remix-run/node"
 import { Authenticator } from "remix-auth"
 import { OAuth2Strategy } from "remix-auth-oauth2"
 import { createOrGetUser } from "src/db/users.server"
+import { EmailLinkStrategy } from "remix-auth-email-link"
 
 import { logger } from "src/logger"
 import { extractError } from "src/utils"
 import { isAdminEmail } from "src/utils.server"
+import { sendEmail } from "./email.server"
 
 // export the whole sessionStorage object
 export let sessionStorage = createCookieSessionStorage({
@@ -29,56 +31,35 @@ export interface AuthSession {
 
 export let authenticator = new Authenticator<AuthSession>(sessionStorage)
 
-//TODO: TEMP
+export const emailStrategyAuthenticator = "email-link"
 
-interface DecodedIDToken {
-  sub: string
-  name: string
-  preferred_username: string
-  profile: string
-  picture: string
-  email: string
-  email_verified: boolean
-  aud: string
-  auth_time: number
-  iat: number
-  exp: number
-  iss: string
-}
+let secret = process.env.COOKIE_SECRET
+if (!secret) throw new Error("Missing COOKIE_SECRET env variable.")
 
 authenticator.use(
-  new OAuth2Strategy(
-    {
-      authorizationURL: "https://huggingface.co/oauth/authorize",
-      tokenURL: "https://huggingface.co/oauth/token",
-      clientID: process.env.HF_CLIENT_ID!,
-      clientSecret: process.env.HF_CLIENT_SECRET!,
-      useBasicAuthenticationHeader: true,
-      callbackURL: process.env.MY_URL + "/auth/callback",
-      scope: "openid profile email read-repos manage-repos",
-    },
-    async ({ accessToken, extraParams, profile, context, request }) => {
-      // NOTE: Huggingface does not give refresh tokens, meaning there is no offline/headless access.
-      // Access Tokens expire after 1 hour (3600 seconds).
-      // This means that any API-level access will not be able to interface with huggingface.
-
+  new EmailLinkStrategy(
+    { sendEmail, secret, callbackURL: "/magic" },
+    // In the verify callback,
+    // you will receive the email address, form data and whether or not this is being called after clicking on magic link
+    // and you should return the user instance
+    async ({
+      email,
+      form,
+      magicLinkVerify,
+    }: {
+      email: string
+      form: FormData
+      magicLinkVerify: boolean
+    }) => {
       try {
-        const idToken: DecodedIDToken = JSON.parse(
-          Buffer.from(
-            (extraParams.id_token as string).split(".")[1],
-            "base64"
-          ).toString("utf8")
-        )
-
         logger.debug(
           {
-            accessToken,
-            ...idToken,
+            email,
           },
           "got user"
         )
 
-        const user = await createOrGetUser(idToken.sub, idToken.email)
+        const user = await createOrGetUser(email)
 
         return {
           ...user,
@@ -97,7 +78,5 @@ authenticator.use(
   ),
   // this is optional, but if you setup more than one OAuth2 instance you will
   // need to set a custom name to each one
-  "huggingface"
+  emailStrategyAuthenticator
 )
-
-export const huggingfaceAuthenticator = "huggingface"

@@ -1,11 +1,14 @@
-import { Database } from "bun:sqlite"
+import sqlite from "sqlite3"
+import { open } from "sqlite"
+
 import { logger } from "src/logger"
 import { readFile } from "fs/promises"
 import path from "path"
 
 const dbFileName = process.env.DB_FILENAME ?? "sqlite.db"
-export const db = new Database(dbFileName, {
-  create: true,
+export const db = await open({
+  filename: dbFileName,
+  driver: sqlite.Database,
 })
 db.exec("PRAGMA journal_mode = WAL;")
 

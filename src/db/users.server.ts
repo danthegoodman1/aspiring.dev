@@ -3,31 +3,30 @@ import { db } from "./db.server"
 import { UserRow } from "./types"
 import { extractError } from "src/utils"
 import { RowsNotFound } from "./errors"
+import { randomUUID } from "crypto"
 
-export async function createOrGetUser(
-  id: string,
-  email: string
-): Promise<UserRow> {
+export async function createOrGetUser(email: string): Promise<UserRow> {
   try {
-    let user = db
-      .query(
-        `
+    let user = await db.get<UserRow>(
+      `
     select *
     from users
-    where id = ?
-  `
-      )
-      .get(id) as UserRow | undefined
+    where email = ?
+  `,
+      email
+    )
     if (!user) {
       // Create it
-      user = db
-        .query(
-          `insert into users (id, email, created_ms) values (?, ?, ?) returning *`
-        )
-        .get(id, email, new Date().getTime()) as UserRow
+      const id = randomUUID()
+      user = await db.get<UserRow>(
+        `insert into users (id, email, created_ms) values (?, ?, ?) returning *`,
+        id,
+        email,
+        new Date().getTime()
+      )
     }
 
-    return user
+    return user!
   } catch (error) {
     logger.error(
       {
@@ -39,16 +38,15 @@ export async function createOrGetUser(
   }
 }
 
-export function selectUser(id: string): UserRow {
-  const user = db
-    .query(
-      `
+export async function selectUser(id: string): Promise<UserRow> {
+  const user = await db.get<UserRow>(
+    `
 select *
 from users
 where id = ?
-`
-    )
-    .get(id) as UserRow | undefined
+`,
+    id
+  )
   if (!user) {
     throw new RowsNotFound()
   }

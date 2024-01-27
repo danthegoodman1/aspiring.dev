@@ -4,7 +4,6 @@ import {
   type MetaFunction,
 } from "@remix-run/node"
 import { Link, useLoaderData } from "@remix-run/react"
-import { useEffect } from "react"
 import { listLatestDocumentsForCollection } from "src/db/documents.server"
 import { DocumentRow } from "src/db/types"
 
@@ -23,8 +22,8 @@ export async function loader(args: LoaderFunctionArgs) {
   })
 }
 
-export default function Index() {
-  const data = useLoaderData<typeof loader>()
+function Index() {
+  const data = useLoaderData<{ posts: DocumentRow[] | undefined }>()
 
   return (
     <div className="flex flex-col gap-4 mb-10">
@@ -37,6 +36,8 @@ export default function Index() {
     </div>
   )
 }
+
+export default Index
 
 function Post(props: DocumentRow) {
   return (

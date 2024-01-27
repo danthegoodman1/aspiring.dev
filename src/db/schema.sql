@@ -32,6 +32,16 @@ create table if not exists documents (
 
 create index if not exists documents_by_slug on documents(collection, slug);
 
+create table if not exists sent_emails (
+  email text not null,
+  subject text not null,
+
+  created_ms int8 not null,
+
+  primary key (email, subject)
+)
+;
+
 -- storing anything we'd proxy to segment
 create table if not exists analytics_events (
   id text not null,

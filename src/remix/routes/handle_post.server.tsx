@@ -19,6 +19,9 @@ import {
 } from "src/db/documents.server"
 import { getAssetS3Path, getMarkdownS3Path } from "~/markdown/paths"
 import { randomUUID } from "crypto"
+import { listAllUsersForNotify } from "src/db/users.server"
+import { sendBulkEmails } from "~/auth/email.server"
+import { renderToString } from "react-dom/server"
 
 export async function handlePostUpload(
   user: AuthSession,
@@ -206,4 +209,63 @@ function rewriteImagePaths(markdown: string, stableID: string): string {
   }
 
   return lines.join("\n")
+}
+
+export async function handlePostNotify(
+  formData: FormData,
+  args: ActionFunctionArgs
+) {
+  // Get all users emails
+  const users = await listAllUsersForNotify()
+  if (!users) {
+    return json<ActionData>({
+      error: "No users found to notify",
+    })
+  }
+
+  const post = await getLatestDocumentByID(
+    "posts",
+    formData.get(postRowIDName)!.toString()
+  )
+
+  await sendBulkEmails({
+    targets: users.map((user) => {
+      return {
+        email: user.email,
+        param: {},
+      }
+    }),
+    emailGenerator(params: any) {
+      return {
+        subject: `New post on aspiring.dev: ${post?.name}`,
+        html: renderToString(
+          <div
+            style={{
+              fontFamily: "sans-serif",
+            }}
+          >
+            <p></p>
+            A new post has been published to aspiring.dev:
+            <br />
+            <br />
+            <p>
+              <a href={`${process.env.MY_URL}/posts/${post?.slug}`}>
+                {post?.name}
+              </a>
+              : {post?.description}
+            </p>
+          </div>
+        ),
+        text:
+          "A new post has been published to aspiring.dev: " +
+          `${process.env.MY_URL}/posts/${post?.slug}`,
+      }
+    },
+    fromName: "aspiring.dev posts",
+    fromEmail: "notifications@aspiring.dev",
+  })
+
+  return json<ActionData>({
+    success: "Notified followers",
+  })
 }

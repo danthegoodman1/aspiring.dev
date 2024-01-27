@@ -15,7 +15,11 @@ import {
   useNavigation,
 } from "@remix-run/react"
 import { authenticator } from "~/auth/authenticator"
-import { handlePostUpdate, handlePostUpload } from "./handle_post.server"
+import {
+  handlePostNotify,
+  handlePostUpdate,
+  handlePostUpload,
+} from "./handle_post.server"
 import { listLatestDocumentsForCollection } from "src/db/documents.server"
 import { classNames, getSQLiteDate } from "src/utils"
 import { Switch } from "@headlessui/react"
@@ -30,6 +34,8 @@ export const slugName = "slug"
 export const postRowIDName = "postRowID"
 export const publishedName = "postPublished"
 export const publishedSlug = "postSlug"
+export const postUpdateName = "postUpdate"
+export const postNotifyName = "postNotify"
 
 export async function action(args: ActionFunctionArgs) {
   const user = await authenticator.isAuthenticated(args.request)
@@ -45,9 +51,14 @@ export async function action(args: ActionFunctionArgs) {
     return handlePostUpload(user!, formData, args)
   }
 
-  const isPostUpdate = formData.get(postRowIDName)?.toString()
+  const isPostUpdate = formData.get(postUpdateName)?.toString()
   if (isPostUpdate) {
     return handlePostUpdate(formData, args)
+  }
+
+  const isPostNotify = formData.get(postNotifyName)?.toString()
+  if (isPostNotify) {
+    return handlePostNotify(formData, args)
   }
 
   return null
@@ -157,34 +168,36 @@ function PostRow(props: PostRowProps) {
   }, [fetcher.data])
 
   return (
-    <fetcher.Form
-      encType="multipart/form-data"
-      method="post"
-      key={props.id}
-      className="flex-col sm:flex-row flex gap-4 border-2 border-black p-4 rounded-lg justify-between"
-      onSubmit={(e) => {
-        if (!window.confirm(`Change publish status on "${props.name}"?`)) {
-          e.preventDefault()
-        }
-      }}
-    >
-      <input type="hidden" name={postRowIDName} value={props.id} />
-      <div className="flex gap-4">
-        <div className="flex-col flex gap-2 w-full">
-          <h3>
-            <a className="underline" href={`/posts/${props.slug}`}>
-              {props.name}
-            </a>
-            <span className="ml-2 text-base text-neutral-400">
-              /posts/
-              <input
-                defaultValue={props.slug}
-                type="text"
-                name={publishedSlug}
-              />
-            </span>
-          </h3>
-          {/* {props.banner_path ? (
+    <div className="flex-col flex gap-4 border-2 border-black p-4 rounded-lg justify-between">
+      <fetcher.Form
+        encType="multipart/form-data"
+        method="post"
+        key={props.id}
+        className="flex-col sm:flex-row flex gap-4 justify-between w-full"
+        onSubmit={(e) => {
+          if (!window.confirm(`Change publish status on "${props.name}"?`)) {
+            e.preventDefault()
+          }
+        }}
+      >
+        <input type="hidden" name={postRowIDName} value={props.id} />
+        <input type="hidden" name={postUpdateName} value={props.id} />
+        <div className="flex gap-4">
+          <div className="flex-col flex gap-2 w-full">
+            <h3>
+              <a className="underline" href={`/posts/${props.slug}`}>
+                {props.name}
+              </a>
+              <span className="ml-2 text-base text-neutral-400">
+                /posts/
+                <input
+                  defaultValue={props.slug}
+                  type="text"
+                  name={publishedSlug}
+                />
+              </span>
+            </h3>
+            {/* {props.banner_path ? (
             <img
               className="border-2 border-black rounded-lg h-32 w-56 aspect-video"
               src={props.banner_path}
@@ -195,71 +208,71 @@ function PostRow(props: PostRowProps) {
               <p>No image</p>
             </div>
           )} */}
-          <p className="sm:max-w-[300px] text-neutral-600">
-            {props.description ?? "No description"}
-          </p>
+            <p className="sm:max-w-[300px] text-neutral-600">
+              {props.description ?? "No description"}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="flex-col gap-2 h-full flex sm:items-end">
-        <p className="text-left sm:text-right text-neutral-400">
-          Version: <br />
-          <span className="text-black">{props.version}</span>
-        </p>
-        <p className="text-left sm:text-right text-neutral-400">
-          Last Updated: <br />
-          <span className="text-black">
-            {new Date(props.created_ms).toLocaleString()}
-          </span>
-        </p>
-        <p className="text-left sm:text-right text-neutral-400">
-          Originally Posted: <br />
-          <span className="text-black">
-            {new Date(props.originally_created_ms).toLocaleString()}
-          </span>
-        </p>
-        <p
-          className={classNames(
-            isPublished ? "text-green-600" : "text-neutral-400"
-          )}
-        >
-          {isPublished ? "Published" : "Unpublished"}
-        </p>
-        <input
-          name={publishedName}
-          type="hidden"
-          value={isPublished ? "yes" : "no"}
-        />
-        <Switch
-          checked={isPublished}
-          onChange={() => {
-            setIsPublished(!isPublished)
-          }}
-          className={({ checked }) =>
-            classNames(
-              "w-[46px] rounded-full h-[24px] flex items-center",
-              checked ? "bg-black" : "bg-neutral-100"
-            )
-          }
-          name={publishedName}
-        >
-          {({ checked }) => (
-            <span
-              aria-hidden="true"
-              className={`${
-                checked ? "translate-x-[23px]" : "translate-x-[1px]"
-              }
+        <div className="flex-col gap-2 h-full flex sm:items-end">
+          <p className="text-left sm:text-right text-neutral-400">
+            Version: <br />
+            <span className="text-black">{props.version}</span>
+          </p>
+          <p className="text-left sm:text-right text-neutral-400">
+            Last Updated: <br />
+            <span className="text-black">
+              {new Date(props.created_ms).toLocaleString()}
+            </span>
+          </p>
+          <p className="text-left sm:text-right text-neutral-400">
+            Originally Posted: <br />
+            <span className="text-black">
+              {new Date(props.originally_created_ms).toLocaleString()}
+            </span>
+          </p>
+          <p
+            className={classNames(
+              isPublished ? "text-green-600" : "text-neutral-400"
+            )}
+          >
+            {isPublished ? "Published" : "Unpublished"}
+          </p>
+          <input
+            name={publishedName}
+            type="hidden"
+            value={isPublished ? "yes" : "no"}
+          />
+          <Switch
+            checked={isPublished}
+            onChange={() => {
+              setIsPublished(!isPublished)
+            }}
+            className={({ checked }) =>
+              classNames(
+                "w-[46px] rounded-full h-[24px] flex items-center",
+                checked ? "bg-black" : "bg-neutral-100"
+              )
+            }
+            name={publishedName}
+          >
+            {({ checked }) => (
+              <span
+                aria-hidden="true"
+                className={`${
+                  checked ? "translate-x-[23px]" : "translate-x-[1px]"
+                }
             pointer-events-none inline-block h-[22px] w-[22px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-            />
-          )}
-        </Switch>
-        <button
-          disabled={fetcher.state !== "idle"}
-          className="rounded-md py-2 px-6 bg-black text-white flex items-center justify-center grow-0 text-sm hover:bg-neutral-700 disabled:bg-neutral-700 self-baseline sm:ml-auto mt-2"
-        >
-          Update
-        </button>
-        {/* <div className="flex gap-2 items-center mr-auto sm:mr-0">
+              />
+            )}
+          </Switch>
+          <button
+            disabled={fetcher.state !== "idle"}
+            className="rounded-md py-2 px-6 bg-black text-white flex items-center justify-center grow-0 text-sm hover:bg-neutral-700 disabled:bg-neutral-700 self-baseline sm:ml-auto mt-2"
+          >
+            Update
+          </button>
+          {/* <div className="flex gap-2 items-center mr-auto sm:mr-0">
           <button name={publishedName} value={isPublished ? "no" : "yes"}>
             <p
               className={classNames(
@@ -271,7 +284,28 @@ function PostRow(props: PostRowProps) {
             </p>
           </button>
         </div> */}
-      </div>
-    </fetcher.Form>
+        </div>
+      </fetcher.Form>
+      <fetcher.Form
+        encType="multipart/form-data"
+        method="post"
+        key={props.id}
+        className="flex-col sm:flex-row flex gap-4 justify-between w-full"
+        onSubmit={(e) => {
+          if (!window.confirm(`Notify everyone of "${props.name}"?`)) {
+            e.preventDefault()
+          }
+        }}
+      >
+        <input type="hidden" name={postRowIDName} value={props.id} />
+        <input type="hidden" name={postNotifyName} value={props.id} />
+        <button
+          disabled={fetcher.state !== "idle"}
+          className="rounded-md py-2 px-6 bg-black text-white flex items-center justify-center grow-0 text-sm hover:bg-neutral-700 disabled:bg-neutral-700 self-baseline sm:ml-auto mt-2"
+        >
+          Notify followers
+        </button>
+      </fetcher.Form>
+    </div>
   )
 }

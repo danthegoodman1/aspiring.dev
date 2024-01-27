@@ -52,3 +52,11 @@ where id = ?
   }
   return user
 }
+
+export async function listAllUsersForNotify(): Promise<UserRow[] | undefined> {
+  return await db.all<UserRow[]>(`
+    select *
+    from users
+    where email_on_post = true
+  `)
+}

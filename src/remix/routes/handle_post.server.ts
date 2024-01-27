@@ -83,7 +83,6 @@ export async function handlePostUpload(
         const descriptionLocation = markdownLines.findIndex((line) => {
           return line.startsWith("> ")
         })
-        console.log("descirption location", descriptionLocation, h1Location)
         let description: string | null = null
         if (descriptionLocation - h1Location <= 2) {
           description = markdownLines[descriptionLocation].slice(1).trim()
@@ -159,14 +158,6 @@ export async function handlePostUpdate(
     const created = new Date().getTime()
 
     // Copy the S3 asset
-    console.log(
-      "copying",
-      getMarkdownS3Path(document.version, postID),
-      "to",
-      getMarkdownS3Path(document.version + 1, postID),
-      "bucket",
-      process.env.S3_BUCKET
-    )
     await s3Client.copyObject({
       Bucket: process.env.S3_BUCKET,
       Key: getMarkdownS3Path(document.version + 1, postID),

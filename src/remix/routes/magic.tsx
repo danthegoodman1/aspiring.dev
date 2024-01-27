@@ -24,7 +24,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // caught error is a response and return it or throw it again
     if (error instanceof Response) {
       // Let's inject the cookie to set
-      console.log("got redirect to", redirectTo)
       if (redirectTo) {
         error.headers.set(
           "set-cookie",

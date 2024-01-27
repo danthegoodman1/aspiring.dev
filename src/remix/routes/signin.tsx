@@ -22,7 +22,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   // This session key `auth:magiclink` is the default one used by the EmailLinkStrategy
   // you can customize it passing a `sessionMagicLinkKey` when creating an
   // instance.
-  console.log(session.has("auth:magiclink"), session.get("auth:email"))
   return json({
     magicLinkSent: session.has("auth:magiclink"),
     magicLinkEmail: session.get("auth:email"),
@@ -50,7 +49,6 @@ export async function action({ request }: ActionFunctionArgs) {
     // caught error is a response and return it or throw it again
     if (error instanceof Response) {
       // Let's inject the cookie to set
-      console.log("got redirect to", redirectTo)
       if (redirectTo) {
         error.headers.set(
           "set-cookie",

@@ -41,6 +41,10 @@ article {
   @apply flex flex-col gap-5
 }
 
+article em {
+  display: inline-block;
+}
+
 article h2 {
   @apply mt-4
 }

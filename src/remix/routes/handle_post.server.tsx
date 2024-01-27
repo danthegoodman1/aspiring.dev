@@ -249,7 +249,7 @@ export async function handlePostNotify(
             <br />
             <br />
             <p>
-              <a href={`${process.env.MY_URL}/posts/${post?.slug}`}>
+              <a href={`${process.env.MY_URL}/posts/${post?.slug}?ref=email`}>
                 {post?.name}
               </a>
               : {post?.description}

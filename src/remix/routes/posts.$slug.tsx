@@ -1,4 +1,9 @@
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/node"
+import {
+  LoaderFunctionArgs,
+  MetaFunction,
+  json,
+  redirect,
+} from "@remix-run/node"
 import { Form, useLoaderData } from "@remix-run/react"
 import { renderToString } from "react-dom/server"
 import {
@@ -11,7 +16,44 @@ import { isAdminEmail } from "src/utils.server"
 import { authenticator } from "~/auth/authenticator"
 import JoinCTA from "~/components/JoinCTA"
 import MarkdownRenderer from "~/components/MarkdownRenderer.server"
+import PostFooter from "~/components/PostFooter"
 import { getMarkdownS3Path } from "~/markdown/paths"
+
+export const meta: MetaFunction<typeof loader> = ({
+  data,
+  matches,
+  params,
+}) => {
+  if (!data) {
+    return matches.flatMap((match) => match.meta ?? [])
+  }
+
+  const { slug } = params
+
+  return [
+    { title: `${data.name}` },
+    {
+      property: "og:title",
+      content: `${data.name}`,
+    },
+    {
+      name: "description",
+      content: data.description,
+    },
+    {
+      property: "og:description",
+      content: data.description,
+    },
+    {
+      property: "og:image",
+      content: `https://aspiring.dev/posts/${slug}.png`,
+    },
+    {
+      property: "twitter:image",
+      content: `https://aspiring.dev/posts/${slug}.png`,
+    },
+  ]
+}
 
 export const emailName = "email"
 
@@ -72,13 +114,20 @@ export async function loader(args: LoaderFunctionArgs) {
           subscribed: isSubbed,
         }}
       />
-      {!user && <JoinCTA emailName={emailName} />}
+      {!user && (
+        <div className="mt-10 w-full">
+          <JoinCTA emailName={emailName} />
+        </div>
+      )}
+      <PostFooter />
     </div>
   )
 
   const rendered = renderToString(jsx)
   return json({
     rendered,
+    name: doc.name,
+    description: doc.description,
   })
 }
 

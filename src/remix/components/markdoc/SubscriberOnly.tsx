@@ -1,5 +1,7 @@
 import { Schema } from "@markdoc/markdoc"
 import { PropsWithChildren } from "react"
+import JoinCTA from "../JoinCTA"
+import { emailName } from "~/routes/posts.$slug"
 
 export const subscriber: Schema = {
   render: "SubscriberOnly",
@@ -44,10 +46,14 @@ export function SubscriberOnly(
           // <a className="rounded-md py-2 my-2 px-6 bg-black text-white flex items-center justify-center grow-0  hover:bg-neutral-700 disabled:bg-neutral-700 w-full self-baseline !no-underline cursor-pointer">
           //   Subscribe to get instant access
           // </a>
-          <p className="italic text-neutral-600">
-            I haven't actually implemented subscriptions yet, but join to stay
-            tuned!
-          </p>
+          <>
+            <p>{props.description}</p>
+            <p className="italic text-neutral-600">
+              I haven't actually implemented subscriptions yet, but join to stay
+              tuned!
+            </p>
+            <JoinCTA emailName={emailName} />
+          </>
         )}
       </div>
     </div>

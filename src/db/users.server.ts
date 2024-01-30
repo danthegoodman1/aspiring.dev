@@ -60,3 +60,18 @@ export async function listAllUsersForNotify(): Promise<UserRow[] | undefined> {
     where email_on_post = true
   `)
 }
+
+export async function setUserNotification(
+  userID: string,
+  notifications: boolean
+) {
+  await db.run(
+    `
+    update users
+    set email_on_post = ?
+    where id = ?
+  `,
+    notifications,
+    userID
+  )
+}

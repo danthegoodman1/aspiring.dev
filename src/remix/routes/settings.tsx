@@ -1,16 +1,23 @@
-import { json } from "@remix-run/node"
+import { faWarning } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { Switch } from "@headlessui/react"
+import { ActionFunctionArgs, json } from "@remix-run/node"
 import {
   Form,
-  Link,
+  useActionData,
   useLoaderData,
   useNavigation,
   useRouteError,
 } from "@remix-run/react"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+import toast from "react-hot-toast"
 import { LoaderFunctionArgs } from "react-router"
+import { selectUser, setUserNotification } from "src/db/users.server"
+import { classNames } from "src/utils"
 import { authenticator } from "~/auth/authenticator"
 
 const subscribeName = "subscribe"
+const notificationsName = "notifications"
 
 interface ActionResponse {
   error?: string
@@ -22,14 +29,34 @@ export async function loader(args: LoaderFunctionArgs) {
     failureRedirect: "/signin",
   })
 
+  const userInfo = await selectUser(user.id)
+
   return json({
     user,
+    userInfo,
     env: process.env.NODE_ENV,
   })
 }
 
+export async function action(args: ActionFunctionArgs) {
+  const user = await authenticator.isAuthenticated(args.request, {
+    failureRedirect: "/signin",
+  })
+
+  const formData = await args.request.formData()
+  console.log(formData.get(notificationsName)?.toString())
+  await setUserNotification(
+    user.id,
+    formData.get(notificationsName)?.toString() === "on"
+  )
+  return json({
+    success: "Updated!",
+  } as ActionResponse)
+}
+
 export default function Settings() {
   const data = useLoaderData<typeof loader>()
+  const actionData = useActionData<typeof action>()
   const nav = useNavigation()
   const saving = nav.state !== "idle"
   const formRef = useRef<HTMLFormElement>(null)
@@ -40,18 +67,35 @@ export default function Settings() {
     }
   }, [saving])
 
+  useEffect(() => {
+    if (actionData?.error) {
+      toast.error(actionData.error)
+    }
+    if (actionData?.success) {
+      toast.success(actionData.success)
+    }
+  }, [actionData])
+
+  const [notificationsOn, setNotificationsOn] = useState(
+    !!data.userInfo.email_on_post
+  )
+
+  useEffect(() => {
+    setNotificationsOn(!!data.userInfo.email_on_post)
+  }, [data])
+
   return (
     <div className="flex flex-col gap-2 mb-10">
-      {/* {actionData && actionData.error && (
+      {actionData && actionData.error && (
         <div className="w-full px-4 py-3 flex items-center gap-3 rounded-lg bg-red-200">
           <p className="flex gap-2 items-center">
             <FontAwesomeIcon icon={faWarning} width={16} /> {actionData.error}
           </p>
         </div>
-      )} */}
+      )}
       <h1>Settings</h1>
       <div className="flex mt-4 flex-col gap-10">
-        <div className="rounded-md border-2 border-black px-6 py-4 flex flex-col gap-3">
+        {/* <div className="rounded-md border-2 border-black px-6 py-4 flex flex-col gap-3">
           <div className="flex flex-col">
             <h3 id="plan">
               {data.user.subscription ? "Subscribed!" : "Not subscribed"}
@@ -101,32 +145,36 @@ export default function Settings() {
               </>
             )}
           </Form>
-        </div>
+        </div> */}
 
-        {/* <div className="rounded-md border-2 border-black px-6 py-4 flex flex-col gap-3">
+        <div className="rounded-md border-2 border-black px-6 py-4 flex flex-col gap-3">
           <h3 id="huggingface">Notifications</h3>
           <Form ref={formRef} method="post" className="flex flex-col gap-1">
             <div className="flex gap-2 items-center">
               <Switch
-                className={({ checked }) => {
-                  return cn([
-                    "w-[26px] rounded-full h-[14px] flex items-center",
-                    checked ? "bg-black" : "bg-neutral-100",
-                  ])
+                className={({ checked }) =>
+                  classNames(
+                    "w-[46px] rounded-full h-[24px] flex items-center",
+                    checked ? "bg-black" : "bg-neutral-200"
+                  )
+                }
+                name={notificationsName}
+                onChange={() => {
+                  setNotificationsOn(!notificationsOn)
                 }}
-                name={emailEverySaleName}
+                checked={notificationsOn}
               >
                 {({ checked }) => (
                   <span
                     aria-hidden="true"
                     className={`${
-                      checked ? "translate-x-[13px]" : "translate-x-[1px]"
+                      checked ? "translate-x-[23px]" : "translate-x-[1px]"
                     }
-            pointer-events-none inline-block h-[12px] w-[12px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
+              pointer-events-none inline-block h-[21px] w-[21px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
                   />
                 )}
               </Switch>
-              <label>Receive emails on every sale</label>
+              <label>Receive emails notifications about new posts</label>
             </div>
             <button
               disabled={saving}
@@ -135,7 +183,7 @@ export default function Settings() {
               {saving ? "Saving..." : "Save"}
             </button>
           </Form>
-        </div> */}
+        </div>
       </div>
     </div>
   )

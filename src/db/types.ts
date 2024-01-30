@@ -33,7 +33,7 @@ export interface UserRow {
   id: string
   email: string
 
-  email_on_post: boolean
+  email_on_post: 1 | 0
   subscription?: string
   created_ms: string
 }

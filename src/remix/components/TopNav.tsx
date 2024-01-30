@@ -18,7 +18,7 @@ const leftNav: LinkItem[] = [
 ]
 
 const rightNav: LinkItem[] = [
-  // { name: "Settings", href: "/settings", authed: true },
+  { name: "Settings", href: "/settings", authed: true },
 ]
 
 export default function TopNav(props: {

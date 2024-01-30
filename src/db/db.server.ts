@@ -10,10 +10,11 @@ export const db = await open({
   filename: dbFileName,
   driver: sqlite.Database,
 })
-db.exec("PRAGMA journal_mode = WAL;")
 
 export async function initDB() {
   logger.debug(`Using db file "${dbFileName}"`)
+  await db.exec("PRAGMA journal_mode = WAL;")
+  await db.exec("PRAGMA busy_timeout = 5000;")
   logger.debug(`Running schema.sql`)
   const schema = (
     await readFile(path.join("src", "db", "schema.sql"))

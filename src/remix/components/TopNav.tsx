@@ -13,8 +13,8 @@ interface LinkItem {
 
 const leftNav: LinkItem[] = [
   { name: "Posts", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Terms", href: "/terms" },
+  // { name: "About", href: "/about" },
+  // { name: "Terms", href: "/terms" },
 ]
 
 const rightNav: LinkItem[] = [

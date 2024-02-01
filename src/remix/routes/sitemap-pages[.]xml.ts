@@ -16,7 +16,7 @@ export async function loader(args: LoaderFunctionArgs) {
     },
     {
       lastMod: startDate,
-      path: "/terms",
+      path: "/about",
     },
   ]
 

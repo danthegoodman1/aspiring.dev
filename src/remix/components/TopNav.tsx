@@ -13,7 +13,7 @@ interface LinkItem {
 
 const leftNav: LinkItem[] = [
   { name: "Posts", href: "/" },
-  // { name: "About", href: "/about" },
+  { name: "About", href: "/about" },
   // { name: "Terms", href: "/terms" },
 ]
 
@@ -70,12 +70,7 @@ export default function TopNav(props: {
                       className="items-center justify-center hidden sm:flex"
                       to={`/signin`}
                     >
-                      <button>
-                        <img
-                          src="https://huggingface.co/datasets/huggingface/badges/resolve/main/sign-in-with-huggingface-lg.svg"
-                          alt="huggingface logo"
-                        />
-                      </button>
+                      Sign in
                     </Link>
                   )}
                   {props.authed && (
@@ -141,12 +136,7 @@ export default function TopNav(props: {
                   )}
                   {!props.authed && (
                     <Link className="flex" to={`/signin`}>
-                      <button>
-                        <img
-                          src="https://huggingface.co/datasets/huggingface/badges/resolve/main/sign-in-with-huggingface-lg.svg"
-                          alt="huggingface logo"
-                        />
-                      </button>
+                      Sign in
                     </Link>
                   )}
                   {props.authed && (

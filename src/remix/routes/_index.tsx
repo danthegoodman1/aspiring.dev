@@ -6,6 +6,7 @@ import {
 import { Link, useLoaderData } from "@remix-run/react"
 import { listLatestDocumentsForCollection } from "src/db/documents.server"
 import { DocumentRow } from "src/db/types"
+import AboutSimple from "~/components/AboutSimple"
 
 export const meta: MetaFunction = () => {
   return [
@@ -27,6 +28,10 @@ function Index() {
 
   return (
     <div className="flex flex-col gap-4 mb-10">
+      <article className="flex flex-col self-center max-w-[1000px] gap-4 p-6 rounded-xl bg-neutral-100 border-neutral-600 border-2 mb-4">
+        <h4 className="text-neutral-700 font-semibold">About aspiring.dev:</h4>
+        <AboutSimple />
+      </article>
       <h1 className="font-bold">Posts</h1>
       <div className="flex flex-col gap-6 sm:gap-10">
         {data.posts?.map((post) => {

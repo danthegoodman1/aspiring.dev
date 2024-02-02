@@ -6,7 +6,7 @@ export default function AboutSimple() {
         <a target="_blank" href="https://twitter.com/Dan_The_Goodman">
           Dan Goodman
         </a>
-        , for the code and hardware projects I build! <br />
+        , for the software, infra, and hardware projects I build! <br />
         Some are for fun, some are for learning, and some are actually used at
         my startup,{" "}
         <a target="_blank" href="https://www.tangia.co">
@@ -16,11 +16,18 @@ export default function AboutSimple() {
       </p>
       <p>
         My goal is to showcase the process of making genuinely interesting
-        projects, and get you eager for the next post!
+        projects, and get you eager for the next post.
       </p>
       <p className="italic text-neutral-800">
         <a href="/signin">Sign in</a> with email to become a member and get
-        notified about new project posts!
+        notified about new project posts! The code for this blog is open source
+        on{" "}
+        <a
+          target="_blank"
+          href="https://github.com/danthegoodman1/aspiring.dev"
+        >
+          Github
+        </a>
       </p>
     </>
   )

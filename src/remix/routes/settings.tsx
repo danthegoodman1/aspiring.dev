@@ -44,7 +44,6 @@ export async function action(args: ActionFunctionArgs) {
   })
 
   const formData = await args.request.formData()
-  console.log(formData.get(notificationsName)?.toString())
   await setUserNotification(
     user.id,
     formData.get(notificationsName)?.toString() === "on"

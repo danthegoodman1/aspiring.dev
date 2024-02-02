@@ -151,11 +151,11 @@ export function handleError(
   { request, params, context }: LoaderFunctionArgs | ActionFunctionArgs
 ) {
   if (!request.signal.aborted) {
-    // logger.error(
-    //   {
-    //     err: extractError(error),
-    //   },
-    //   "unhandled remix error"
-    // )
+    logger.error(
+      {
+        err: extractError(error),
+      },
+      "unhandled remix error"
+    )
   }
 }

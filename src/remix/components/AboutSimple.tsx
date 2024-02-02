@@ -16,12 +16,11 @@ export default function AboutSimple() {
       </p>
       <p>
         My goal is to showcase the process of making genuinely interesting
-        projects, get you eager for the next post, and maybe even generate a
-        revenue stream!
+        projects, and get you eager for the next post!
       </p>
       <p className="italic text-neutral-800">
-        <a href="/signin">Sign in</a> with email to be notified about new posts
-        as I build new projects!
+        <a href="/signin">Sign in</a> with email to become a member and get
+        notified about new project posts!
       </p>
     </>
   )

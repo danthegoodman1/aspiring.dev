@@ -254,6 +254,15 @@ export async function handlePostNotify(
               </a>
               : {post?.description}
             </p>
+            <br />
+            <br />
+            <p>
+              You received this email because you have new post notifications
+              on. You can turn that off at{" "}
+              <a href={`${process.env.MY_URL}/settings?ref=email`}>
+                {`${process.env.MY_URL}/settings?ref=email`}
+              </a>
+            </p>
           </div>
         ),
         text:

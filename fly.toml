@@ -31,4 +31,3 @@ S3_ENDPOINT = "https://80dda379301ddc81dae5cb6b31d27e99.r2.cloudflarestorage.com
 LITESTREAM_S3_URL = "https://80dda379301ddc81dae5cb6b31d27e99.r2.cloudflarestorage.com/aspiringdev-litestream/sqlite.db"
 LOG_LEVEL = "debug"
 MY_URL = "https://aspiring.dev"
-PRETTY = "1"

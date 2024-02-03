@@ -64,10 +64,11 @@ export async function loader(args: LoaderFunctionArgs) {
         >
           <p
             style={{
-              fontSize: 91,
+              fontSize: 88,
               fontWeight: 600,
               marginTop: -5,
               color: "black",
+              maxWidth: 1100,
             }}
           >
             {doc.name}
@@ -75,7 +76,7 @@ export async function loader(args: LoaderFunctionArgs) {
           <p
             style={{
               fontSize: 41,
-              marginTop: 25,
+              marginTop: 15,
               maxWidth: 1000,
               color: "black",
             }}
@@ -88,7 +89,7 @@ export async function loader(args: LoaderFunctionArgs) {
           style={{
             display: "flex",
             position: "absolute",
-            bottom: 41,
+            bottom: 21,
             right: 48,
           }}
         >
@@ -107,7 +108,7 @@ export async function loader(args: LoaderFunctionArgs) {
           style={{
             display: "flex",
             position: "absolute",
-            bottom: 41,
+            bottom: 21,
             left: 48,
           }}
         >
@@ -119,7 +120,6 @@ export async function loader(args: LoaderFunctionArgs) {
               fontWeight: 600,
             }}
           >
-            Dan Goodman -{" "}
             {new Date(doc.originally_created_ms).toLocaleDateString()}
           </p>
         </div>

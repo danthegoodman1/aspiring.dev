@@ -16,7 +16,9 @@ export const meta: MetaFunction = () => {
 }
 
 export async function loader(args: LoaderFunctionArgs) {
-  const posts = await listLatestDocumentsForCollection("posts")
+  const posts = await listLatestDocumentsForCollection("posts", {
+    requirePublished: true,
+  })
 
   return json({
     posts,

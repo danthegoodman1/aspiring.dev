@@ -5,6 +5,7 @@ import React from "react"
 import yaml from "js-yaml"
 import { Callout, callout } from "./markdoc/Callout"
 import { SubscriberOnly, subscriber } from "./markdoc/SubscriberOnly"
+import { MemberOnly, member } from "./markdoc/MemberOnly"
 import { Fence, fence } from "./markdoc/Fence.server"
 import { Img, image } from "./markdoc/Img"
 import { BlockQuote, blockquote } from "./markdoc/Quote"
@@ -23,6 +24,7 @@ export default function MarkdownRenderer(props: {
     tags: {
       callout,
       subscriber,
+      member,
     },
     nodes: {
       fence,
@@ -39,6 +41,7 @@ export default function MarkdownRenderer(props: {
     components: {
       Callout,
       SubscriberOnly,
+      MemberOnly,
       Fence,
       Img,
       BlockQuote,

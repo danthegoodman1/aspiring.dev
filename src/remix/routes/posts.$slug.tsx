@@ -109,6 +109,7 @@ export async function loader(args: LoaderFunctionArgs) {
         content={postString}
         variables={{
           subscribed: isSubbed,
+          member: !!user,
         }}
       />
       {!user && (

@@ -65,11 +65,27 @@ export async function listLatestDocumentsForCollection(
 ): Promise<DocumentRow[] | undefined> {
   const rows = await db.all(
     `
-      SELECT *
+      SELECT
+        collection,
+        id,
+        version,
+        published,
+        slug,
+        name,
+        description,
+        banner_path,
+        created_ms,
+        originally_created_ms
       from documents
-      where collection = ?
-      ${options?.requirePublished ? "and published = true" : ""}
-      order by version desc limit 1
+      where (id, version) in (
+        select id, max(version) as version
+        from documents
+        where collection = ?
+        ${options?.requirePublished ? "and published = true" : ""}
+        group by id
+        order by version
+      )
+      order by originally_created_ms desc
       `,
     collection
   )

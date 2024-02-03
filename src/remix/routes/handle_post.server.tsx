@@ -87,7 +87,7 @@ export async function handlePostUpload(
           return line.startsWith("> ")
         })
         let description: string | null = null
-        if (descriptionLocation - h1Location <= 2) {
+        if (descriptionLocation > 0 && descriptionLocation - h1Location <= 2) {
           description = markdownLines[descriptionLocation].slice(1).trim()
           logger.debug(
             `Got description at ${descriptionLocation}: ${description}`

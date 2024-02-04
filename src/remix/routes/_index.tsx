@@ -47,6 +47,8 @@ function Index() {
 export default Index
 
 function Post(props: DocumentRow) {
+  const postDate = new Date(props.originally_created_ms).toLocaleDateString()
+
   return (
     <Link
       to={`/posts/${props.slug}`}
@@ -59,22 +61,14 @@ function Post(props: DocumentRow) {
     >
       <div className="flex gap-4 w-full">
         <div className="flex-col items-start sm:flex-row flex gap-4 sm:gap-6 w-full">
-          {/* {props.banner_path && (
-            <img
-              className="border-2 border-black rounded-lg h-32 w-56 aspect-video"
-              src={props.banner_path}
-              alt={props.slug}
-            />
-          )} */}
           <div className="flex flex-col sm:flex-grow sm:gap-4 gap-6 items-center sm:items-start grow">
             <div className="flex flex-col sm:gap-4 items-center sm:items-start w-full">
               <div className="flex flex-col items-center sm:items-start w-full gap-2 sm:gap-0">
                 <h2 className="text-center sm:text-left flex-grow">
-                  {props.name ||
-                    "Example post title Example post title Example post title Example post title Example post title Example post title "}
+                  {props.name}
                 </h2>
                 <p className="text-left sm:text-right text-neutral-400">
-                  {new Date(props.originally_created_ms).toLocaleDateString()}
+                  {postDate}
                 </p>
               </div>
             </div>

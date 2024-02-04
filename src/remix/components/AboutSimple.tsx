@@ -20,7 +20,6 @@ export default function AboutSimple() {
         projects, and get you eager for the next post.
       </p>
       <p className="italic text-neutral-800">
-        <br />
         <a href="/signin">Sign in</a> with email to become a member and get
         notified about new project posts! The code for this blog is open source
         on{" "}

@@ -15,6 +15,7 @@ import sourceMapSupport from "source-map-support"
 sourceMapSupport.install()
 
 import * as build from "../build/index.js"
+import { extractError } from "./utils"
 
 const listenPort = process.env.PORT || "8080"
 

@@ -61,6 +61,10 @@ article li {
   @apply list-disc ml-6 my-1
 }
 
+article p {
+  line-height: 1.7rem;
+}
+
 .shiki {
   text-wrap: wrap;
   overflow-x: scroll;

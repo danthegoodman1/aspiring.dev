@@ -10,6 +10,7 @@ import { Fence, fence } from "./markdoc/Fence.server"
 import { Img, image } from "./markdoc/Img"
 import { BlockQuote, blockquote } from "./markdoc/Quote"
 import { Link, link } from "./markdoc/Link"
+import { Heading, heading } from "./markdoc/Heading"
 
 export default function MarkdownRenderer(props: {
   content: string
@@ -32,6 +33,7 @@ export default function MarkdownRenderer(props: {
       image,
       blockquote,
       link,
+      heading,
     },
     variables: {
       ...frontmatter,
@@ -48,6 +50,7 @@ export default function MarkdownRenderer(props: {
       Img,
       BlockQuote,
       Link,
+      Heading,
     },
   })
 }

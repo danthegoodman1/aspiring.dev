@@ -32,3 +32,4 @@ LITESTREAM_S3_URL = "https://80dda379301ddc81dae5cb6b31d27e99.r2.cloudflarestora
 LOG_LEVEL = "debug"
 MY_URL = "https://aspiring.dev"
 AWS_DEFAULT_REGION = "us-east-1"
+TS_HOSTNAME = "aspiringdev"

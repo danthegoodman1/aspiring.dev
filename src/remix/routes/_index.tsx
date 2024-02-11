@@ -21,12 +21,21 @@ export async function loader(args: LoaderFunctionArgs) {
   })
 
   return json({
-    posts,
+    posts: posts?.map((post) => {
+      return {
+        ...post,
+        date: new Date(post.originally_created_ms).toLocaleDateString(),
+      }
+    }),
   })
 }
 
+interface PostWithDate extends DocumentRow {
+  date: string
+}
+
 function Index() {
-  const data = useLoaderData<{ posts: DocumentRow[] | undefined }>()
+  const data = useLoaderData<{ posts: PostWithDate[] | undefined }>()
 
   return (
     <div className="flex flex-col gap-4 mb-10">
@@ -46,9 +55,7 @@ function Index() {
 
 export default Index
 
-function Post(props: DocumentRow) {
-  const postDate = new Date(props.originally_created_ms).toLocaleDateString()
-
+function Post(props: PostWithDate) {
   return (
     <Link
       to={`/posts/${props.slug}`}
@@ -68,7 +75,7 @@ function Post(props: DocumentRow) {
                   {props.name}
                 </h2>
                 <p className="text-left sm:text-right text-neutral-400">
-                  {postDate}
+                  {props.date}
                 </p>
               </div>
             </div>

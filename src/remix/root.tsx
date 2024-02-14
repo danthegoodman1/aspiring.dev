@@ -66,10 +66,12 @@ export async function loader(args: LoaderFunctionArgs) {
   ENV["MY_URL"] = process.env.MY_URL!
   ENV["ENV"] = process.env.NODE_ENV!
 
+  const url = new URL(args.request.url)
   return json({
-    currentPath: new URL(args.request.url).pathname,
+    currentPath: url.pathname,
     user,
     ENV,
+    shouldUseScrollRestoration: !url.pathname.startsWith("/posts"),
   })
 }
 
@@ -126,7 +128,8 @@ export default function App() {
             __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
           }}
         />
-        <ScrollRestoration />
+        {/* <ScrollRestoration /> */}
+        {data.shouldUseScrollRestoration && <ScrollRestoration />}
         <Scripts />
         <LiveReload />
       </body>

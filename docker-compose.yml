@@ -16,13 +16,13 @@ services:
       MINIO_ROOT_PASSWORD: password
     command: server --console-address ":9001" /data
     container_name: aspiring-minio
-  createbuckets:
-    image: minio/mc
-    depends_on:
-      - minio
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc alias set myminio http://minio:9000 user password;
-      /usr/bin/mc mb myminio/testbucket;
-      exit 0;
-      "
+  # createbuckets:
+  #   image: minio/mc
+  #   depends_on:
+  #     - minio
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #     /usr/bin/mc alias set myminio http://minio:9000 user password;
+  #     /usr/bin/mc mb myminio/testbucket;
+  #     exit 0;
+  #     "
